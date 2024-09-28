@@ -1,3 +1,8 @@
+<form method="get" action="{% url 'post-search' %}">
+    <input type="text" name="query" placeholder="Search...">
+    <button type="submit">Search</button>
+</form>
+
 <h2>All Posts</h2>
 <a href="{% url 'post-create' %}">Create New Post</a>
 <ul>

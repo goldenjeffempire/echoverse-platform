@@ -17,3 +17,6 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Write your comment here...'}),
         }
+
+class SearchForm(forms.Form):
+    query = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Search...'}))
