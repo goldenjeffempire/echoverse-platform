@@ -2,11 +2,13 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .forms import SignUpForm, CommentForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import BlogPost
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import admin
+from django.contrib.auth.models import User
+from .forms import SignUpForm, CommentForm
+from .models import BlogPost, Post
 
 # Signup view for user registration
 def signup(request):
@@ -103,3 +105,21 @@ class PostSearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['search_form'] = SearchForm()
         return context
+
+# Admin view for managing posts
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'created_at', 'updated_at')
+    search_fields = ('title', 'content')
+    list_filter = ('author',)
+
+# Register the Post model with the custom admin
+admin.site.register(Post, PostAdmin)
+
+# Admin view for managing users
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_active', 'is_staff')
+    search_fields = ('username', 'email')
+
+# Register the custom User admin
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
