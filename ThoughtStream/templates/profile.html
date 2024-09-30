@@ -1,4 +1,21 @@
-<h2>User Profile</h2>
-<p>Username: {{ user.username }}</p>
-<p>Email: {{ user.email }}</p>
-<p><a href="{% url 'password_change' %}">Change Password</a></p>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Your Profile</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+
+  <h3>Your Bio:</h3>
+  <p>{{ profile.bio }}</p>
+  {% if profile.profile_picture %}
+    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" />
+  {% endif %}
+
+  <h2>User Profile</h2>
+  <p>Username: {{ user.username }}</p>
+  <p>Email: {{ user.email }}</p>
+  <p><a href="{% url 'password_change' %}">Change Password</a></p>
+{% endblock %}

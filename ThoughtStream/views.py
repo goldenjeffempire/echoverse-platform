@@ -1,14 +1,28 @@
-from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .forms import SignUpForm, CommentForm
-from .models import BlogPost, Post
+from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm
+from .models import UserProfile, BlogPost, Post
+
+# Profile view for logged-in users
+@login_required
+def profile_view(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=profile)
+    
+    return render(request, 'profile.html', {'form': form, 'profile': profile})
 
 # Signup view for user registration
 def signup(request):
