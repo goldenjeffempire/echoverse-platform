@@ -5,9 +5,10 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
-from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm
+from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm, ContactForm
 from .models import UserProfile, BlogPost, Post
 
+# Home view
 def home(request):
     return render(request, 'home.html')
 
@@ -22,7 +23,7 @@ def profile_view(request):
             return redirect('profile')
     else:
         form = UserProfileForm(instance=profile)
-    
+
     return render(request, 'profile.html', {'form': form, 'profile': profile})
 
 # Signup view for user registration
@@ -37,10 +38,12 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
+# Profile view (redundant, can be removed if not used)
 @login_required
 def profile(request):
     return render(request, 'profile.html')
 
+# Post list view
 class PostListView(ListView):
     model = BlogPost
     template_name = 'post_list.html'
@@ -48,6 +51,7 @@ class PostListView(ListView):
     ordering = ['-created_at']
     paginate_by = 5
 
+# Post detail view
 class PostDetailView(DetailView):
     model = BlogPost
     template_name = 'post_detail.html'
@@ -69,6 +73,7 @@ class PostDetailView(DetailView):
             return redirect('post-detail', pk=post.pk)
         return self.get(self, request, *args, **kwargs)
 
+# Post creation view
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = BlogPost
     fields = ['title', 'content']
@@ -78,6 +83,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+# Post update view
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPost
     fields = ['title', 'content']
@@ -91,6 +97,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         post = self.get_object()
         return self.request.user == post.author
 
+# Post deletion view
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPost
     template_name = 'post_confirm_delete.html'
@@ -100,6 +107,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author
 
+# Post search view
 class PostSearchView(ListView):
     model = BlogPost
     template_name = 'post_search.html'
@@ -117,3 +125,18 @@ class PostSearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['search_form'] = SearchForm()
         return context
+
+# Contact view
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid(): 
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            
+            return render(request, 'contact_success.html', {'name': name})
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
