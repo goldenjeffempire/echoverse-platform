@@ -1,6 +1,46 @@
-<h1>Welcome to EchoVerse</h1>
-{% if user.is_authenticated %}
-    <p>Hello, {{ user.username }}! <a href="{% url 'logout' %}">Logout</a></p>
-{% else %}
-    <p>You are not logged in. <a href="{% url 'login' %}">Login</a></p>
-{% endif %}
+{% extends 'base.html' %}
+
+{% block title %}Home - EchoVerse{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to EchoVerse!</h1>
+        <p>Where your stories find their voice</p>
+    </div>
+</section>
+
+<section class="featured-posts">
+    <h2>Featured Stories</h2>
+    <div class="post-grid">
+        <article class="post-card">
+            <h3>Post Title 1</h3>
+            <p>Snippet of the blog post...</p>
+            <a href="#">Read more</a>
+        </article>
+        <article class="post-card">
+            <h3>Post Title 2</h3>
+            <p>Snippet of the blog post...</p>
+            <a href="#">Read more</a>
+        </article>
+        <!-- Add more post cards as needed -->
+    </div>
+</section>
+
+<section class="recent-posts">
+    <h2>Recent Stories</h2>
+    <div class="post-list">
+        <article class="post-card">
+            <h3>Recent Post Title 1</h3>
+            <p>Snippet of the recent blog post...</p>
+            <a href="#">Read more</a>
+        </article>
+        <article class="post-card">
+            <h3>Recent Post Title 2</h3>
+            <p>Snippet of the recent blog post...</p>
+            <a href="#">Read more</a>
+        </article>
+        <!-- More recent post cards -->
+    </div>
+</section>
+{% endblock %}

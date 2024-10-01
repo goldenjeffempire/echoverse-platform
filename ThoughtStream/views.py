@@ -8,6 +8,9 @@ from django.db.models import Q
 from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm
 from .models import UserProfile, BlogPost, Post
 
+def home(request):
+    return render(request, 'home.html')
+
 # Profile view for logged-in users
 @login_required
 def profile_view(request):
@@ -33,9 +36,6 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
-
-def home(request):
-    return render(request, 'home.html')
 
 @login_required
 def profile(request):

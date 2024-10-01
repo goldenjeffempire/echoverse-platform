@@ -2,6 +2,7 @@
 
 {% block content %}
   <h2>Your Profile</h2>
+  
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
@@ -10,12 +11,19 @@
 
   <h3>Your Bio:</h3>
   <p>{{ profile.bio }}</p>
+  
   {% if profile.profile_picture %}
     <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" />
   {% endif %}
 
-  <h2>User Profile</h2>
+  <h2>User Information</h2>
   <p>Username: {{ user.username }}</p>
   <p>Email: {{ user.email }}</p>
   <p><a href="{% url 'password_change' %}">Change Password</a></p>
+
+  <!-- Logout Form -->
+  <form action="{% url 'logout' %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+  </form>
 {% endblock %}
