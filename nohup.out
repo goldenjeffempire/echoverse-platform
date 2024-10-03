@@ -1,0 +1,12 @@
+[2024-10-03 04:43:28 +0100] [6020] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 04:43:28 +0100] [6020] [INFO] Listening at: http://127.0.0.1:8000 (6020)
+[2024-10-03 04:43:28 +0100] [6020] [INFO] Using worker: sync
+[2024-10-03 04:43:28 +0100] [6021] [INFO] Booting worker with pid: 6021
+[2024-10-03 04:43:28 +0100] [6022] [INFO] Booting worker with pid: 6022
+[2024-10-03 04:43:28 +0100] [6023] [INFO] Booting worker with pid: 6023
+[2024-10-03 05:27:13 +0000] [6021] [INFO] Worker exiting (pid: 6021)
+[2024-10-03 06:27:13 +0100] [6020] [INFO] Handling signal: term
+[2024-10-03 05:27:13 +0000] [6023] [INFO] Worker exiting (pid: 6023)
+[2024-10-03 05:27:13 +0000] [6022] [INFO] Worker exiting (pid: 6022)
+[2024-10-03 06:27:13 +0100] [6020] [ERROR] Worker (pid:6021) was sent SIGTERM!
+[2024-10-03 06:27:14 +0100] [6020] [INFO] Shutting down: Master

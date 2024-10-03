@@ -1,0 +1,195 @@
+[2024-10-03 06:31:43 +0100] [7751] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:31:43 +0100] [7751] [INFO] Listening at: unix:/home/jeff/echoverse-platform/echoverse.sock (7751)
+[2024-10-03 06:31:43 +0100] [7751] [INFO] Using worker: sync
+[2024-10-03 06:31:43 +0100] [7752] [INFO] Booting worker with pid: 7752
+[2024-10-03 06:31:43 +0100] [7753] [INFO] Booting worker with pid: 7753
+[2024-10-03 06:31:43 +0100] [7754] [INFO] Booting worker with pid: 7754
+[2024-10-03 06:32:04 +0100] [7751] [INFO] Handling signal: int
+[2024-10-03 05:32:04 +0000] [7754] [INFO] Worker exiting (pid: 7754)
+[2024-10-03 05:32:04 +0000] [7753] [INFO] Worker exiting (pid: 7753)
+[2024-10-03 05:32:04 +0000] [7752] [INFO] Worker exiting (pid: 7752)
+[2024-10-03 06:32:04 +0100] [7751] [INFO] Shutting down: Master
+[2024-10-03 06:34:02 +0100] [7777] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:34:02 +0100] [7777] [INFO] Listening at: unix:/home/jeff/echoverse-platform/echoverse.sock (7777)
+[2024-10-03 06:34:02 +0100] [7777] [INFO] Using worker: sync
+[2024-10-03 06:34:02 +0100] [7778] [INFO] Booting worker with pid: 7778
+[2024-10-03 06:34:02 +0100] [7779] [INFO] Booting worker with pid: 7779
+[2024-10-03 06:34:02 +0100] [7780] [INFO] Booting worker with pid: 7780
+[2024-10-03 06:34:08 +0100] [7777] [INFO] Handling signal: int
+[2024-10-03 05:34:08 +0000] [7779] [INFO] Worker exiting (pid: 7779)
+[2024-10-03 05:34:08 +0000] [7778] [INFO] Worker exiting (pid: 7778)
+[2024-10-03 05:34:08 +0000] [7780] [INFO] Worker exiting (pid: 7780)
+[2024-10-03 06:34:08 +0100] [7777] [INFO] Shutting down: Master
+[2024-10-03 06:34:33 +0100] [7784] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:34:33 +0100] [7784] [INFO] Listening at: unix:/home/jeff/echoverse-platform/echoverse.sock (7784)
+[2024-10-03 06:34:33 +0100] [7784] [INFO] Using worker: sync
+[2024-10-03 06:34:33 +0100] [7785] [INFO] Booting worker with pid: 7785
+[2024-10-03 06:34:33 +0100] [7786] [INFO] Booting worker with pid: 7786
+[2024-10-03 06:34:33 +0100] [7787] [INFO] Booting worker with pid: 7787
+[2024-10-03 06:34:36 +0100] [7784] [INFO] Handling signal: int
+[2024-10-03 05:34:36 +0000] [7787] [INFO] Worker exiting (pid: 7787)
+[2024-10-03 05:34:36 +0000] [7786] [INFO] Worker exiting (pid: 7786)
+[2024-10-03 05:34:36 +0000] [7785] [INFO] Worker exiting (pid: 7785)
+[2024-10-03 06:34:36 +0100] [7784] [INFO] Shutting down: Master
+[2024-10-03 06:34:39 +0100] [7788] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:34:39 +0100] [7788] [INFO] Listening at: unix:/home/jeff/echoverse-platform/echoverse.sock (7788)
+[2024-10-03 06:34:39 +0100] [7788] [INFO] Using worker: sync
+[2024-10-03 06:34:39 +0100] [7789] [INFO] Booting worker with pid: 7789
+[2024-10-03 06:34:39 +0100] [7790] [INFO] Booting worker with pid: 7790
+[2024-10-03 06:34:39 +0100] [7791] [INFO] Booting worker with pid: 7791
+[2024-10-03 06:35:18 +0100] [7788] [INFO] Handling signal: int
+[2024-10-03 05:35:18 +0000] [7789] [INFO] Worker exiting (pid: 7789)
+[2024-10-03 05:35:18 +0000] [7791] [INFO] Worker exiting (pid: 7791)
+[2024-10-03 05:35:18 +0000] [7790] [INFO] Worker exiting (pid: 7790)
+[2024-10-03 06:35:19 +0100] [7788] [INFO] Shutting down: Master
+[2024-10-03 06:35:52 +0100] [7807] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:35:52 +0100] [7807] [INFO] Listening at: unix:/home/jeff/echoverse-platform/echoverse.sock (7807)
+[2024-10-03 06:35:52 +0100] [7807] [INFO] Using worker: sync
+[2024-10-03 06:35:52 +0100] [7808] [INFO] Booting worker with pid: 7808
+[2024-10-03 06:35:52 +0100] [7809] [INFO] Booting worker with pid: 7809
+[2024-10-03 06:35:52 +0100] [7810] [INFO] Booting worker with pid: 7810
+[2024-10-03 06:36:03 +0100] [7807] [INFO] Handling signal: int
+[2024-10-03 05:36:03 +0000] [7809] [INFO] Worker exiting (pid: 7809)
+[2024-10-03 05:36:03 +0000] [7808] [INFO] Worker exiting (pid: 7808)
+[2024-10-03 05:36:03 +0000] [7810] [INFO] Worker exiting (pid: 7810)
+[2024-10-03 06:36:03 +0100] [7807] [INFO] Shutting down: Master
+[2024-10-03 06:37:15 +0100] [7823] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:37:15 +0100] [7823] [INFO] Listening at: http://192.168.215.211:8000 (7823)
+[2024-10-03 06:37:15 +0100] [7823] [INFO] Using worker: sync
+[2024-10-03 06:37:15 +0100] [7824] [INFO] Booting worker with pid: 7824
+[2024-10-03 06:37:15 +0100] [7825] [INFO] Booting worker with pid: 7825
+[2024-10-03 06:37:15 +0100] [7826] [INFO] Booting worker with pid: 7826
+[2024-10-03 06:37:31 +0100] [7823] [INFO] Handling signal: int
+[2024-10-03 05:37:31 +0000] [7826] [INFO] Worker exiting (pid: 7826)
+[2024-10-03 05:37:31 +0000] [7824] [INFO] Worker exiting (pid: 7824)
+[2024-10-03 05:37:31 +0000] [7825] [INFO] Worker exiting (pid: 7825)
+[2024-10-03 06:37:31 +0100] [7823] [INFO] Shutting down: Master
+[2024-10-03 06:37:33 +0100] [7829] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:37:33 +0100] [7829] [INFO] Listening at: http://127.0.0.1:8000 (7829)
+[2024-10-03 06:37:33 +0100] [7829] [INFO] Using worker: sync
+[2024-10-03 06:37:33 +0100] [7830] [INFO] Booting worker with pid: 7830
+[2024-10-03 06:37:33 +0100] [7831] [INFO] Booting worker with pid: 7831
+[2024-10-03 06:37:33 +0100] [7832] [INFO] Booting worker with pid: 7832
+[2024-10-03 06:37:40 +0100] [7829] [INFO] Handling signal: int
+[2024-10-03 05:37:40 +0000] [7830] [INFO] Worker exiting (pid: 7830)
+[2024-10-03 05:37:40 +0000] [7831] [INFO] Worker exiting (pid: 7831)
+[2024-10-03 05:37:40 +0000] [7832] [INFO] Worker exiting (pid: 7832)
+[2024-10-03 06:37:40 +0100] [7829] [INFO] Shutting down: Master
+[2024-10-03 06:37:42 +0100] [7833] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:37:42 +0100] [7833] [INFO] Listening at: http://127.0.0.1:8000 (7833)
+[2024-10-03 06:37:42 +0100] [7833] [INFO] Using worker: sync
+[2024-10-03 06:37:42 +0100] [7834] [INFO] Booting worker with pid: 7834
+[2024-10-03 06:37:42 +0100] [7835] [INFO] Booting worker with pid: 7835
+[2024-10-03 06:37:42 +0100] [7836] [INFO] Booting worker with pid: 7836
+[2024-10-03 06:37:44 +0100] [7833] [INFO] Handling signal: int
+[2024-10-03 05:37:44 +0000] [7834] [INFO] Worker exiting (pid: 7834)
+[2024-10-03 05:37:44 +0000] [7835] [INFO] Worker exiting (pid: 7835)
+[2024-10-03 05:37:44 +0000] [7836] [INFO] Worker exiting (pid: 7836)
+[2024-10-03 06:37:45 +0100] [7833] [INFO] Shutting down: Master
+[2024-10-03 06:51:32 +0100] [8117] [DEBUG] Current configuration:
+  config: ./gunicorn.conf.py
+  wsgi_app: None
+  bind: ['unix:/home/jeff/echoverse-platform/echoverse.sock']
+  backlog: 2048
+  workers: 3
+  worker_class: sync
+  threads: 1
+  worker_connections: 1000
+  max_requests: 0
+  max_requests_jitter: 0
+  timeout: 30
+  graceful_timeout: 30
+  keepalive: 2
+  limit_request_line: 4094
+  limit_request_fields: 100
+  limit_request_field_size: 8190
+  reload: False
+  reload_engine: auto
+  reload_extra_files: []
+  spew: False
+  check_config: False
+  print_config: False
+  preload_app: False
+  sendfile: None
+  reuse_port: False
+  chdir: /home/jeff/echoverse-platform
+  daemon: False
+  raw_env: []
+  pidfile: None
+  worker_tmp_dir: None
+  user: 1000
+  group: 1000
+  umask: 0
+  initgroups: False
+  tmp_upload_dir: None
+  secure_scheme_headers: {'X-FORWARDED-PROTOCOL': 'ssl', 'X-FORWARDED-PROTO': 'https', 'X-FORWARDED-SSL': 'on'}
+  forwarded_allow_ips: ['127.0.0.1', '::1']
+  accesslog: /home/jeff/echoverse-platform/gunicorn-access.log
+  disable_redirect_access_to_syslog: False
+  access_log_format: %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"
+  errorlog: /home/jeff/echoverse-platform/gunicorn-error.log
+  loglevel: debug
+  capture_output: False
+  logger_class: gunicorn.glogging.Logger
+  logconfig: None
+  logconfig_dict: {}
+  logconfig_json: None
+  syslog_addr: udp://localhost:514
+  syslog: False
+  syslog_prefix: None
+  syslog_facility: user
+  enable_stdio_inheritance: False
+  statsd_host: None
+  dogstatsd_tags: 
+  statsd_prefix: 
+  proc_name: None
+  default_proc_name: EchoVerse.wsgi:application
+  pythonpath: None
+  paste: None
+  on_starting: <function OnStarting.on_starting at 0x703d93ee5d80>
+  on_reload: <function OnReload.on_reload at 0x703d93ee5ea0>
+  when_ready: <function WhenReady.when_ready at 0x703d93ee5fc0>
+  pre_fork: <function Prefork.pre_fork at 0x703d93ee60e0>
+  post_fork: <function Postfork.post_fork at 0x703d93ee6200>
+  post_worker_init: <function PostWorkerInit.post_worker_init at 0x703d93ee6320>
+  worker_int: <function WorkerInt.worker_int at 0x703d93ee6440>
+  worker_abort: <function WorkerAbort.worker_abort at 0x703d93ee6560>
+  pre_exec: <function PreExec.pre_exec at 0x703d93ee6680>
+  pre_request: <function PreRequest.pre_request at 0x703d93ee67a0>
+  post_request: <function PostRequest.post_request at 0x703d93ee6830>
+  child_exit: <function ChildExit.child_exit at 0x703d93ee6950>
+  worker_exit: <function WorkerExit.worker_exit at 0x703d93ee6a70>
+  nworkers_changed: <function NumWorkersChanged.nworkers_changed at 0x703d93ee6b90>
+  on_exit: <function OnExit.on_exit at 0x703d93ee6cb0>
+  ssl_context: <function NewSSLContext.ssl_context at 0x703d93ee6dd0>
+  proxy_protocol: False
+  proxy_allow_ips: ['127.0.0.1', '::1']
+  keyfile: None
+  certfile: None
+  ssl_version: 2
+  cert_reqs: 0
+  ca_certs: None
+  suppress_ragged_eofs: True
+  do_handshake_on_connect: False
+  ciphers: None
+  raw_paste_global_conf: []
+  permit_obsolete_folding: False
+  strip_header_spaces: False
+  permit_unconventional_http_method: False
+  permit_unconventional_http_version: False
+  casefold_http_method: False
+  forwarder_headers: ['SCRIPT_NAME', 'PATH_INFO']
+  header_map: drop
+[2024-10-03 06:51:32 +0100] [8117] [INFO] Starting gunicorn 23.0.0
+[2024-10-03 06:51:32 +0100] [8117] [DEBUG] Arbiter booted
+[2024-10-03 06:51:32 +0100] [8117] [INFO] Listening at: unix:/home/jeff/echoverse-platform/echoverse.sock (8117)
+[2024-10-03 06:51:32 +0100] [8117] [INFO] Using worker: sync
+[2024-10-03 06:51:32 +0100] [8118] [INFO] Booting worker with pid: 8118
+[2024-10-03 06:51:33 +0100] [8119] [INFO] Booting worker with pid: 8119
+[2024-10-03 06:51:33 +0100] [8120] [INFO] Booting worker with pid: 8120
+[2024-10-03 06:51:33 +0100] [8117] [DEBUG] 3 workers
+[2024-10-03 06:52:26 +0100] [8117] [INFO] Handling signal: int
+[2024-10-03 05:52:26 +0000] [8118] [INFO] Worker exiting (pid: 8118)
+[2024-10-03 05:52:26 +0000] [8119] [INFO] Worker exiting (pid: 8119)
+[2024-10-03 05:52:26 +0000] [8120] [INFO] Worker exiting (pid: 8120)
+[2024-10-03 06:52:26 +0100] [8117] [INFO] Shutting down: Master

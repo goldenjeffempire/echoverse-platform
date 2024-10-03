@@ -4,11 +4,11 @@
 </form>
 
 <h2>All Posts</h2>
-<a href="{% url 'post-create' %}">Create New Post</a>
+<a href="{% url 'post_create' %}">Create New Post</a>
 <ul>
     {% for post in posts %}
         <li>
-            <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
             <small>by {{ post.author }} on {{ post.created_at }}</small>
         </li>
     {% endfor %}
@@ -20,7 +20,18 @@
             <a href="?page=1">&laquo; first</a>
             <a href="?page={{ posts.previous_page_number }}">previous</a>
         {% endif %}
-
+urlpatterns = [
+    path('', home, name='home'),
+    path('signup/', signup, name='signup'),
+    path('profile/', profile_view, name='profile'),
+    path('contact/', contact_view, name='contact'),
+    path('posts/', PostListView.as_view(), name='post_list'),
+    path('post/new/', PostCreateView.as_view(), name='post_create'),  # Ensure this line exists
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
+    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
+    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
+    path('search/', PostSearchView.as_view(), name='post-search'),
+]
         <span class="current">
             Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
         </span>

@@ -78,6 +78,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = BlogPost
     fields = ['title', 'content']
     template_name = 'post_form.html'
+    success_url = reverse_lazy('post_list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
