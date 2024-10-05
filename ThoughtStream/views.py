@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
-from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm, ContactForm
+from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm, ContactForm, PostForm
 from .models import UserProfile, BlogPost, Post
 
 # Home view
@@ -59,7 +59,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.all()
-path('admin/', admin.site.urls),        context['comment_form'] = CommentForm()
+        context['comment_form'] = CommentForm()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -76,9 +76,9 @@ path('admin/', admin.site.urls),        context['comment_form'] = CommentForm()
 # Post creation view
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = BlogPost
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'post_form.html'
-    success_url = reverse_lazy('post_list')
+    success_url = '/success/'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -87,7 +87,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 # Post update view
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPost
-    fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'post_form.html'
 
     def form_valid(self, form):
@@ -110,17 +110,17 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Post search view
 class PostSearchView(ListView):
-    model = BlogPost
-    template_name = 'post_search.html'
+    model = Post
+    template_name = 'post_list.html'
     context_object_name = 'posts'
 
     def get_queryset(self):
         query = self.request.GET.get('query')
         if query:
-            return BlogPost.objects.filter(
+            return Post.objects.filter(
                 Q(title__icontains=query) | Q(content__icontains=query)
             ).distinct()
-        return BlogPost.objects.none()
+        return Post.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -141,3 +141,14 @@ def contact_view(request):
         form = ContactForm()
 
     return render(request, 'contact.html', {'form': form})
+
+# Create Post view (function-based)
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('post_list')
+    else:
+        form = PostForm()
+    return render(request, 'post_form.html', {'form': form})
