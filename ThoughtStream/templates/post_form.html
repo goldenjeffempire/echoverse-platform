@@ -11,9 +11,20 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        {% if form.errors %}
+            <div class="error">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <button type="submit" class="button">Save</button>
     </form>
 
     <a href="{% url 'post_list' %}" class="button">Back to Post List</a>
-    <a href="{% url 'ThoughtStream:create_post' %}" class="button">Create Another Post</a>
+    <a href="{% url 'post_create' %}" class="button">Create Another Post</a>
 {% endblock %}

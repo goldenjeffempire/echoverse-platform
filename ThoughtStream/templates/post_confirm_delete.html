@@ -1,7 +1,10 @@
-<h2>Delete Post</h2>
-<p>Are you sure you want to delete "{{ object.title }}"?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete</button>
-</form>
-<a href="{% url 'post-detail' object.pk %}">Cancel</a>
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Are you sure you want to delete "{{ post.title }}"?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button">Confirm Delete</button>
+    </form>
+    <a href="{% url 'post_list' %}" class="button">Cancel</a>
+{% endblock %}

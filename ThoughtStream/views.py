@@ -53,8 +53,9 @@ class PostListView(ListView):
 
 # Post detail view
 class PostDetailView(DetailView):
-    model = BlogPost
+    model = Post
     template_name = 'post_detail.html'
+    context_object_name = 'post'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,10 +76,10 @@ class PostDetailView(DetailView):
 
 # Post creation view
 class PostCreateView(LoginRequiredMixin, CreateView):
-    model = BlogPost
+    model = Post
     form_class = PostForm
     template_name = 'post_form.html'
-    success_url = '/success/'
+    success_url = '/posts/'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -86,9 +87,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 # Post update view
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = BlogPost
+    model = Post
     form_class = PostForm
     template_name = 'post_form.html'
+    success_url = '/posts/'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -100,7 +102,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # Post deletion view
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = BlogPost
+    model = Post
     template_name = 'post_confirm_delete.html'
     success_url = reverse_lazy('post-list')
 
@@ -110,7 +112,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Post search view
 class PostSearchView(ListView):
-    model = Post
+    model = BlogPost
     template_name = 'post_list.html'
     context_object_name = 'posts'
 
@@ -147,6 +149,7 @@ def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
+            form.instance.author = request.user
             form.save()
             return redirect('post_list')
     else:
