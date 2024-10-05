@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ view.object.title if view.object else 'New Post' }}</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="button">Save</button>
-</form>
+    <h2>
+        {% if view.object %}
+            {{ view.object.title }}
+        {% else %}
+            New Post
+        {% endif %}
+    </h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button">Save</button>
+    </form>
 
-<a href="{% url 'post-list' %}" class="button">Back to Post List</a>
-<a href="{% url 'create_post' %}" class="button">Create Another Post</a>
+    <a href="{% url 'post-list' %}" class="button">Back to Post List</a>
+    <a href="{% url 'create_post' %}" class="button">Create Another Post</a>
 {% endblock %}

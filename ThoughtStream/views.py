@@ -45,7 +45,7 @@ def profile(request):
 
 # Post list view
 class PostListView(ListView):
-    model = BlogPost
+    model = Post
     template_name = 'post_list.html'
     context_object_name = 'posts'
     ordering = ['-created_at']
@@ -59,7 +59,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.all()
-        context['comment_form'] = CommentForm()
+path('admin/', admin.site.urls),        context['comment_form'] = CommentForm()
         return context
 
     def post(self, request, *args, **kwargs):
