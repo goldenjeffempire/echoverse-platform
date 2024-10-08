@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from .forms import UserProfileForm, SignUpForm, CommentForm, SearchForm, ContactForm, PostForm
-from .models import UserProfile, BlogPost, Post
+from .models import UserProfile, Post, Comment
 
 # Home view
 def home(request):
@@ -59,7 +59,14 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comments'] = self.object.comments.all()
+        ost_instance = self.get_object()  # Explicitly fetch the post instance
+        
+        # Ensure we're filtering comments f0r the correct post instance
+        if isinstance(post_instance, Post):
+            context['comments'] = Comment.objects.filter(post=post_instance)
+        else:
+            context['comments'] = []
+        
         context['comment_form'] = CommentForm()
         return context
 
@@ -72,6 +79,7 @@ class PostDetailView(DetailView):
             comment.author = request.user
             comment.save()
             return redirect('post-detail', pk=post.pk)
+        # If the form is invalid, return to the same page with the form errors
         return self.get(self, request, *args, **kwargs)
 
 # Post creation view
@@ -112,12 +120,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Post search view
 class PostSearchView(ListView):
-    model = BlogPost
-    template_name = 'post_list.html'
+    model = Post
+    template_name = 'post_search.html'
     context_object_name = 'posts'
 
     def get_queryset(self):
-        query = self.request.GET.get('query')
+        query = self.request.GET.get('q')
         if query:
             return Post.objects.filter(
                 Q(title__icontains=query) | Q(content__icontains=query)
@@ -128,6 +136,10 @@ class PostSearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['search_form'] = SearchForm()
         return context
+from django import forms
+
+class SearchForm(forms.Form):
+    q = forms.CharField(label='Search', max_length=100)
 
 # Contact view
 def contact_view(request):

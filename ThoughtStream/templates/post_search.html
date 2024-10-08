@@ -1,18 +1,21 @@
-<h2>Search Results for "{{ request.GET['query'] }}"</h2>
+{% extends "base.html" %}
 
-<form method="get" action="{% url 'post-search' %}">
-    <input type="text" name="query" placeholder="Search..." value="{{ request.GET['query'] }}">
-    <button type="submit">Search</button>
-</form>
+{% block content %}
+    <h2>Search Results for "{{ request.GET.query }}"</h2>
 
-<ul>
-    {% for post in posts %}
-        <li>
-            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
-            <small>by {{ post.author }} on {{ post.created_at|date:"F j, Y" }}</small>
-        </li>
-    {% empty %}
-        <p>No posts found.</p>
-    {% endfor %}
-</ul>
+    <form method="get" action="{% url 'post_search' %}">
+        <input type="text" name="q" placeholder="Search posts..." value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+    </form>
 
+    <ul>
+        {% for post in posts %}
+            <li>
+                <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+                <small>by {{ post.author }} on {{ post.created_at|date:"F j, Y" }}</small>
+            </li>
+        {% empty %}
+            <p>No posts found.</p>
+        {% endfor %}
+    </ul>
+{% endblock %}

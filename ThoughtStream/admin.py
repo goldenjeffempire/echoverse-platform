@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Post
+from .models import Post, Comment
 
 # Admin view for managing posts
 class PostAdmin(admin.ModelAdmin):
@@ -10,6 +10,7 @@ class PostAdmin(admin.ModelAdmin):
 
 # Register the Post model with the custom admin
 admin.site.register(Post, PostAdmin)
+admin.site.register(Comment)
 
 # Admin view for managing users
 class UserAdmin(admin.ModelAdmin):
