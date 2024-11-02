@@ -3,10 +3,14 @@ from .models import Post
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm
+from django.core.paginator import paginator
 
 def post_list(request):
     posts = Post.objects.all()
-    return render(request, 'echoverse/post_list.html', {'posts': posts})
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'echoverse/post_list.html', {'page_obj': page_obj})
 
 def register(request):
     if request.method == 'POST':
@@ -66,3 +70,7 @@ def delete_post(request, post_id):
         post.delete()
         return redirect('post_list')
     return render(request, 'echoverse/delete_post.html', {'post': post})
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    return render(request, 'echoverse/post_detail.html', {'post': post})

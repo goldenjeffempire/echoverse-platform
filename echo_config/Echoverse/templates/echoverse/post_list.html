@@ -4,21 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Blog Posts</title>
+    <title>Post LIst</title>
 </head>
 <body>
     <div class="container">
         <h1 class="mt-5">Blog Posts</h1>
-        <ul class="list-group mt-3">
-            {% for post in posts %}
-                <li class="list-group-item">
-                    <h2>{{ post.title }}</h2>
-                    <p>{{ post.content }}</p>
-                    <p class="text-muted">By {{ post.author }} on {{ post.created_at }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-</body>
-</html>
+        <a href="{% url 'create_post' %}" class="btn btn-primary mb-3">Create New Post</a>
+        <ul class="list-group">
+    {% for post in page_obj %}
+        <li class="list-group-item">
+            <h5>{{ post.title }}</h5>
+            <p>{{ post.content|truncatewords:30 }}</p>
+            <p><strong>Author:</strong> {{ post.author.username }}</p>
+            <p><strong>Created at:</strong> {{ post.created_at }}</p>
+            <a href="{% url 'post_detail' post.id %}" class="btn btn-info">View</a>
+            <a href="{% url 'edit_post' post.id %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Delete</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No posts available.</li>
+    {% endfor %}
+</ul>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 
