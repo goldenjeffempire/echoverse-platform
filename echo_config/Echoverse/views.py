@@ -112,12 +112,12 @@ def post_detail(request, post_id):
 
 @login_required
 def profile(request):
-    user_profile = get_object_or_404(UserProfile, user=request.user)
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        bio = request.POST.get('bio', '')
-        location = request.POST.get('location', '')
-        user_profile.bio = bio
-        user_profile.location = location
-        user_profile.save()
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
         return redirect('profile')
-    return render(request, 'echoverse/profile.html', {'profile': user_profile})
+    else:
+        form = UserProfileForm(instance=user_profile)
+    return render(request, 'echoverse/profile.html', {'form': form})
