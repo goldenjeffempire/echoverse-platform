@@ -3,14 +3,16 @@ from .models import Post
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm
-from django.core.paginator import paginator
+from django.core.paginator import Paginator
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
 
 def post_list(request):
     posts = Post.objects.all()
-    paginator = Paginator(posts, 5)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'echoverse/post_list.html', {'page_obj': page_obj})
+    return render(request, 'echoverse/post_list.html', {'posts': posts})
 
 def register(request):
     if request.method == 'POST':
@@ -36,11 +38,14 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'echoverse/login.html', {'form': form})
+class CustomLoginView(LoginView):
+    template_name = 'echoverse/login.html'
 
 def logout_view(request):
     logout(request)
     return redirect('post_list')
 
+@login_required
 def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -53,6 +58,7 @@ def create_post(request):
         form = PostForm()
     return render(request, 'echoverse/create_post.html', {'form': form})
 
+@login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == 'POST':
@@ -64,6 +70,7 @@ def edit_post(request, post_id):
         form = PostForm(instance=post)
     return render(request, 'echoverse/edit_post.html', {'form': form})
 
+@login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == 'POST':
