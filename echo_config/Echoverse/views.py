@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, UserProfile, Comment, Like
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm
 from django.core.paginator import Paginator
@@ -116,11 +116,15 @@ def post_detail(request, pk):
 @login_required
 def profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user_form = UserChangeForm(request.POST or None, instance=request.user)
+    profile_form = UserProfileForm(request.POST or None, request.FILES or None, instance=user_profile)
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        if form.is_valid():
-            form.save()
-        return redirect('profile')
-    else:
-        form = UserProfileForm(instance=user_profile)
-    return render(request, 'echoverse/profile.html', {'form': form})
+        if form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('profile')
+    
+    return render(request, 'echoverse/profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
