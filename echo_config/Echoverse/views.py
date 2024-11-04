@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post
+from .models import Post, UserProfile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm
@@ -61,6 +61,8 @@ def create_post(request):
 @login_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        return redirect('post_list')
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
@@ -73,6 +75,8 @@ def edit_post(request, post_id):
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if post.author != request.user:
+        return redirect('post_list')
     if request.method == 'POST':
         post.delete()
         return redirect('post_list')
@@ -81,3 +85,15 @@ def delete_post(request, post_id):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, 'echoverse/post_detail.html', {'post': post})
+
+@login_required
+def profile(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    if request.method == 'POST':
+        bio = request.POST.get('bio', '')
+        location = request.POST.get('location', '')
+        user_profile.bio = bio
+        user_profile.location = location
+        user_profile.save()
+        return redirect('profile')
+    return render(request, 'echoverse/profile.html', {'profile': user_profile})
