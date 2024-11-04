@@ -14,17 +14,22 @@
         <p>{{ post.content }}</p>
         <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Posts</a>
 
-        <h2>Comments</h2>
+        <h2>Comments</h3>
+        {% for comment in comments %}
+            <div>
+                <strong>{{ comment.author.username }}</strong> on {{ comment.created_at }}:
+                <p>{{ comment.content }}</p>
+            </div>
+        {% empty %}
+            <p>No comments yet.</p>
+        {% endfor %}
+
+        <h2>Add a Comment</h3>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Add Comment</button>
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
-        <ul>
-            {% for comment in comments %}
-                <li><strong>{{ comment.author.username }}</strong>: {{ comment.text }} <em>{{ comment.created_at }}</em></li>
-            {% endfor %}
-        </ul>
 
         <h3>{{ post.likes.count }} Likes</h3>
         <form method="post">

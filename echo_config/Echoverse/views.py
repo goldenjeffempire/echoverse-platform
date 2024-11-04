@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, UserProfile
+from .models import Post, UserProfile, Comment
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm
@@ -84,7 +84,7 @@ def delete_post(request, post_id):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    comments = post.comments.all()
+    comments = comment.objects.filter(post=post)
     is_liked = post.likes.filter(user=request.user).exists()
 
     if request.method == 'POST':
@@ -92,20 +92,20 @@ def post_detail(request, post_id):
             Like.objects.get_or_create(post=post, user=request.user)
             return redirect('post_detail', post_id=post.id)
         elif 'comment' in request.POST:
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                comment = form.save(commit=False)
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
                 comment.post = post
                 comment.author = request.user
                 comment.save()
                 return redirect('post_detail', post_id=post.id)
     else:
-        form = CommentForm()
+        comment_form = CommentForm()
 
     return render(request, 'echoverse/post_detail.html', {
         'post': post,
         'comments': comments,
-        'form': form,
+        'comment_form': comment_form,
         'is_liked': is_liked,
     })
 
