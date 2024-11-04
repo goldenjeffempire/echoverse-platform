@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import post_list, register, login_view, logout_view, create_post, edit_post, delete_post, post_detail, profile
+from .views import post_list, register, login_view, logout_view, create_post, edit_post, delete_post, post_detail, profile, CustomLoginView, CustomLogoutView
 from . import views
 
 urlpatterns = [
@@ -13,5 +13,7 @@ urlpatterns = [
     path('delete/<int:post_id>/', delete_post, name='delete_post'),
     path('post/<int:id>/', post_detail, name='post_detail'),
     path('profile/', profile, name='profile'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
 ]
 

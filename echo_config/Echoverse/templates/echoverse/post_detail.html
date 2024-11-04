@@ -35,7 +35,7 @@
         <p>{{ post.content }}</p>
 
         <h3>Likes: {{ post.likes.count }}</h3>
-
+        {% if user.is_authenticated %}
         <form method="post">
             {% csrf_token %}
             {% if liked %}
@@ -61,6 +61,9 @@
             {{ comment_form.as_p }}
             <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
+    {% else %}
+        <p>You must be <a href="{% url 'login' %}">logged in</a> to like or comment.</p>
+    {% endif %}
     </div>
 </body>
 </html>

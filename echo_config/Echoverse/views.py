@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm
 from django.core.paginator import Paginator
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 
 def post_list(request):
@@ -44,6 +44,8 @@ class CustomLoginView(LoginView):
 def logout_view(request):
     logout(request)
     return redirect('post_list')
+class CustomLogoutView(LogoutView):
+    next_page = 'post_list'
 
 @login_required
 def create_post(request):
@@ -82,10 +84,11 @@ def delete_post(request, post_id):
         return redirect('post_list')
     return render(request, 'echoverse/delete_post.html', {'post': post})
 
-def post_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    comments = comment.objects.filter(post=post)
-    is_liked = post.likes.filter(user=request.user).exists()
+@login_required
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    comments = post.comments.all()
+    liked = Like.object.filter(post=post, user=request.user).exists()
 
     if request.method == 'POST':
         if 'like' in request.POST:
