@@ -14,7 +14,7 @@
         <p>{{ post.content }}</p>
         <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Posts</a>
 
-        <h2>Comments</h3>
+        <h3>Comments</h3>
         {% for comment in comments %}
             <div>
                 <strong>{{ comment.author.username }}</strong> on {{ comment.created_at }}:
@@ -24,21 +24,42 @@
             <p>No comments yet.</p>
         {% endfor %}
 
-        <h2>Add a Comment</h3>
+        <h3>Add a Comment</h3>
         <form method="post">
             {% csrf_token %}
             {{ comment_form.as_p }}
             <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
 
-        <h3>{{ post.likes.count }} Likes</h3>
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+
+        <h3>Likes: {{ post.likes.count }}</h3>
+
         <form method="post">
             {% csrf_token %}
-            {% if not is_liked %}
-                <button type="submit" name="like" class="btn btn-success">Like</button>
+            {% if liked %}
+                <button type="submit" name="unlike" class="btn btn-secondary" disabled>Liked</button>
             {% else %}
-                <button type="button" class="btn btn-secondary" disabled>Liked</button>
+                <button type="submit" name="like" class="btn btn-primary">Like</button>
             {% endif %}
+        </form>
+
+        <h3>Comments</h3>
+        {% for comment in comments %}
+            <div>
+                <strong>{{ comment.author.username }}</strong> on {{ comment.created_at }}:
+                <p>{{ comment.content }}</p>
+            </div>
+        {% empty %}
+            <p>No comments yet.</p>
+        {% endfor %}
+
+        <h3>Add a Comment</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
     </div>
 </body>

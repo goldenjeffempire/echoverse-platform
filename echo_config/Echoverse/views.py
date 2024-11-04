@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, UserProfile, Comment
+from .models import Post, UserProfile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm
@@ -90,7 +90,7 @@ def post_detail(request, post_id):
     if request.method == 'POST':
         if 'like' in request.POST:
             Like.objects.get_or_create(post=post, user=request.user)
-            return redirect('post_detail', post_id=post.id)
+            return redirect('post_detail', pk=post.pk)
         elif 'comment' in request.POST:
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
@@ -98,7 +98,7 @@ def post_detail(request, post_id):
                 comment.post = post
                 comment.author = request.user
                 comment.save()
-                return redirect('post_detail', post_id=post.id)
+                return redirect('post_detail', pk=post.pk)
     else:
         comment_form = CommentForm()
 
@@ -106,7 +106,7 @@ def post_detail(request, post_id):
         'post': post,
         'comments': comments,
         'comment_form': comment_form,
-        'is_liked': is_liked,
+        'liked': liked,
     })
 
 
