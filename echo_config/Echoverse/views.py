@@ -85,17 +85,30 @@ def delete_post(request, post_id):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     comments = post.comments.all()
+    is_liked = post.likes.filter(user=request.user).exists()
+
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
+        if 'like' in request.POST:
+            Like.objects.get_or_create(post=post, user=request.user)
             return redirect('post_detail', post_id=post.id)
+        elif 'comment' in request.POST:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.post = post
+                comment.author = request.user
+                comment.save()
+                return redirect('post_detail', post_id=post.id)
     else:
         form = CommentForm()
-    return render(request, 'echoverse/post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+    return render(request, 'echoverse/post_detail.html', {
+        'post': post,
+        'comments': comments,
+        'form': form,
+        'is_liked': is_liked,
+    })
+
 
 @login_required
 def profile(request):

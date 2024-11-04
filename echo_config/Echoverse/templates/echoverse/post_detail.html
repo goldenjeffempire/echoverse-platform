@@ -25,6 +25,17 @@
                 <li><strong>{{ comment.author.username }}</strong>: {{ comment.text }} <em>{{ comment.created_at }}</em></li>
             {% endfor %}
         </ul>
+
+        <h3>{{ post.likes.count }} Likes</h3>
+        <form method="post">
+            {% csrf_token %}
+            {% if not is_liked %}
+                <button type="submit" name="like" class="btn btn-success">Like</button>
+            {% else %}
+                <button type="button" class="btn btn-secondary" disabled>Liked</button>
+            {% endif %}
+        </form>
     </div>
 </body>
 </html>
+
