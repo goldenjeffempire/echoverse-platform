@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, UserProfile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -84,7 +84,18 @@ def delete_post(request, post_id):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    return render(request, 'echoverse/post_detail.html', {'post': post})
+    comments = post.comments.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post_detail', post_id=post.id)
+    else:
+        form = CommentForm()
+    return render(request, 'echoverse/post_detail.html', {'post': post, 'comments': comments, 'form': form})
 
 @login_required
 def profile(request):

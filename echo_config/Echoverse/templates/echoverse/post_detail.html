@@ -13,6 +13,18 @@
         <p><strong>Created at:</strong> {{ post.created_at }}</p>
         <p>{{ post.content }}</p>
         <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Posts</a>
+
+        <h2>Comments</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+        <ul>
+            {% for comment in comments %}
+                <li><strong>{{ comment.author.username }}</strong>: {{ comment.text }} <em>{{ comment.created_at }}</em></li>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>
