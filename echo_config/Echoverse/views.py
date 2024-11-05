@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Q
 
 def post_list(request):
     posts = Post.objects.all()
@@ -160,3 +161,10 @@ def comment_view(request):
     else:
         form = CommentForm()
     return render(request, 'echoverse/comment.html', {'form': form})
+
+def search_posts(request):
+    query = request.GET.get('q')
+    results = []
+    if query:
+        results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
+    return render(request, 'echoverse/search_results.html', {'results': results, 'query': query})
