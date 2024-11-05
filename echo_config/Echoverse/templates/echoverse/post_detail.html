@@ -12,11 +12,26 @@
         <p><strong>Author:</strong> {{ post.author.username }}</p>
         <p><strong>Created at:</strong> {{ post.created_at }}</p>
         <p>{{ post.content }}</p>
+        <h3>Likes: {{ post.likes.count }}</h3>
+        
+        {% if user.is_authenticated %}
+            <form method="post" class="mb-3">
+                {% csrf_token %}
+                {% if liked %}
+                    <button type="submit" name="unlike" class="btn btn-secondary" disabled>Liked</button>
+                {% else %}
+                    <button type="submit" name="like" class="btn btn-primary">Like</button>
+                {% endif %}
+            </form>
+        {% else %}
+            <p>You must be <a href="{% url 'login' %}">logged in</a> to like or comment.</p>
+        {% endif %}
+
         <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Posts</a>
 
-        <h3>Comments</h3>
+        <h3 class="mt-5">Comments</h3>
         {% for comment in comments %}
-            <div>
+            <div class="mb-2">
                 <strong>{{ comment.author.username }}</strong> on {{ comment.created_at }}:
                 <p>{{ comment.content }}</p>
             </div>
@@ -25,46 +40,15 @@
         {% endfor %}
 
         <h3>Add a Comment</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit" class="btn btn-primary">Post Comment</button>
-        </form>
-
-        <h2>{{ post.title }}</h2>
-        <p>{{ post.content }}</p>
-
-        <h3>Likes: {{ post.likes.count }}</h3>
         {% if user.is_authenticated %}
-        <form method="post">
-            {% csrf_token %}
-            {% if liked %}
-                <button type="submit" name="unlike" class="btn btn-secondary" disabled>Liked</button>
-            {% else %}
-                <button type="submit" name="like" class="btn btn-primary">Like</button>
-            {% endif %}
-        </form>
-
-        <h3>Comments</h3>
-        {% for comment in comments %}
-            <div>
-                <strong>{{ comment.author.username }}</strong> on {{ comment.created_at }}:
-                <p>{{ comment.content }}</p>
-            </div>
-        {% empty %}
-            <p>No comments yet.</p>
-        {% endfor %}
-
-        <h3>Add a Comment</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit" class="btn btn-primary">Post Comment</button>
-        </form>
-    {% else %}
-        <p>You must be <a href="{% url 'login' %}">logged in</a> to like or comment.</p>
-    {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        {% else %}
+            <p>You must be <a href="{% url 'login' %}">logged in</a> to comment.</p>
+        {% endif %}
     </div>
 </body>
 </html>
-
