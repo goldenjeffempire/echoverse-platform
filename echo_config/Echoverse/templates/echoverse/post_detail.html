@@ -49,6 +49,13 @@
         {% else %}
             <p>You must be <a href="{% url 'login' %}">logged in</a> to comment.</p>
         {% endif %}
+
+        <h3>Tags:</h3>
+        <p>
+            {% for tag in post.tags.all %}
+                <span class="badge badge-info">{{ tag.name }}</span>
+            {% endfor %}
+        </p>
     </div>
 </body>
 </html>
