@@ -1,0 +1,37 @@
+<h2>Moderate Comments</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Post</th>
+            <th>Author</th>
+            <th>Comment</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for comment in comments %}
+            <tr>
+                <td>{{ comment.post.title }}</td>
+                <td>{{ comment.author.username }}</td>
+                <td>{{ comment.text }}</td>
+                <td>{{ comment.approved|yesno:"Approved,Pending" }}</td>
+                <td>
+                    {% if not comment.approved %}
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            <button type="submit" name="approve" class="btn btn-success">Approve</button>
+                        </form>
+                    {% else %}
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            <button type="submit" name="disapprove" class="btn btn-danger">Disapprove</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
