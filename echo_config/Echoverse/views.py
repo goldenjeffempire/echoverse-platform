@@ -14,7 +14,7 @@ def post_list(request):
     if query:
         posts = Post.objects.filter(title__icontains=query)
     else:
-        posts = Post.objects.all()
+        posts = Post.objects.all().order_by('-created_at')
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
