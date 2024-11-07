@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, UserProfile, Comment, Like
+from .models import Post, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm
@@ -117,20 +117,21 @@ def post_detail(request, pk):
 
 
 @login_required
-def profile(request):
+def profile_view(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-    user_form = UserChangeForm(request.POST or None, instance=request.user)
-    profile_form = UserProfileForm(request.POST or None, request.FILES or None, instance=user_profile)
+    return render(request, 'echoverse/profile.html', {'profile': user_profile})
+
+@login_required
+def edit_profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        if form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            return redirect('profile')
-    
-    return render(request, 'echoverse/profile.html', {
-        'user_form': user_form,
-        'profile_form': profile_form,
-    })
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_view')
+    else:
+        form = UserProfileForm(instance=user_profile)
+    return render(request, 'echoverse/edit_profile.html', {'form': form})
 
 @staff_member_required
 def moderate_comments(request):
