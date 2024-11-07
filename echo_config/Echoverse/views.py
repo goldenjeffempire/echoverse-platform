@@ -66,7 +66,6 @@ def create_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            form.save_m2m()
             return redirect('post_list')
     else:
         form = PostForm()
@@ -75,16 +74,41 @@ def create_post(request):
 @login_required
 def edit_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
     if post.author != request.user:
+        messages.error(request, "You are not authorized to edit this post.")
         return redirect('post_list')
+
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
+            messages.success(request, "Post updated successfully.")
             return redirect('post_detail', pk=post.pk)
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = PostForm(instance=post)
-    return render(request, 'echoverse/edit_post.html', {'form': form})
+
+    return render(request, 'echoverse/edit_post.html', {'form': form, 'post': post})
+
+
+@login_required
+def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('profile_view')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'echoverse/edit_profile.html', {'form': form})
 
 @login_required
 def delete_post(request, post_id):
@@ -131,16 +155,30 @@ def profile_view(request):
     return render(request, 'echoverse/profile.html', {'profile': user_profile})
 
 @login_required
-def edit_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+@login_required
+def edit_post(request, pk):
+    """
+    Handles editing of a post by the logged-in user.
+    """
+    post = get_object_or_404(Post, pk=pk)
+
+    # Ensure the logged-in user is the author of the post
+    if post.author != request.user:
+        messages.error(request, 'You are not authorized to edit this post.')
+        return redirect('post_list')
+
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
-            return redirect('profile_view')
+            messages.success(request, 'The post has been successfully updated.')
+            return redirect('post_list')
+        else:
+            messages.error(request, 'There was an error updating the post. Please try again.')
     else:
-        form = UserProfileForm(instance=user_profile)
-    return render(request, 'echoverse/edit_profile.html', {'form': form})
+        form = PostForm(instance=post)
+
+    return render(request, 'echoverse/edit_post.html', {'form': form, 'post': post})
 
 @staff_member_required
 def moderate_comments(request):
