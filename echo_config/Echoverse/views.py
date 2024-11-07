@@ -104,7 +104,7 @@ def post_detail(request, pk):
                 comment.post = post
                 comment.author = request.user
                 comment.save()
-                return redirect('post_list')
+                return redirect('post_detail', pk=post.pk)
     else:
         comment_form = CommentForm()
 

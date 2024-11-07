@@ -34,9 +34,10 @@
             <div class="mb-2">
                 <strong>{{ comment.author.username }}</strong> on {{ comment.created_at }}:
                 <p>{{ comment.content }}</p>
+                <p><small>{{ comment.created_at }}</small></p>
             </div>
         {% empty %}
-            <p>No comments yet.</p>
+            <p>No comments yet. Be the first to comment!</p>
         {% endfor %}
 
         <h3>Add a Comment</h3>
