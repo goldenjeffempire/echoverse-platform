@@ -10,11 +10,20 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 
 def post_list(request):
-    posts = Post.objects.all()
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(title__icontains=query)
+    else:
+        posts = Post.objects.all()
+
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'echoverse/post_list.html', {'posts': posts})
+
+    return render(request, 'echoverse/post_list.html', {
+        'posts': page_obj,
+        'query': query,
+    })
 
 def register(request):
     if request.method == 'POST':
@@ -91,18 +100,18 @@ def delete_post(request, post_id):
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments.all()
-    liked = Like.object.filter(post=post, user=request.user).exists()
+    liked = post.likes.filter(user=request.user).exists()
 
     if request.method == 'POST':
         if 'like' in request.POST:
-            Like.objects.get_or_create(post=post, user=request.user)
-            return redirect('post_detail', pk=post.pk)
+            if not liked:
+                Like.objects.create(post=post, user=request.user)
         elif 'comment' in request.POST:
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
                 comment = comment_form.save(commit=False)
                 comment.post = post
-                comment.author = request.user
+                comment.user = request.user
                 comment.save()
                 return redirect('post_detail', pk=post.pk)
     else:

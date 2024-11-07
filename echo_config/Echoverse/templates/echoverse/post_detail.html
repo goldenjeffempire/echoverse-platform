@@ -12,12 +12,11 @@
         <p><strong>Author:</strong> {{ post.author.username }}</p>
         <p><strong>Created at:</strong> {{ post.created_at }}</p>
         <p>{{ post.content }}</p>
-        <h3>Likes: {{ post.likes.count }}</h3>
-        
+
+        <h3>Likes: {{ post.likes.count }}</h3>     
         {% if user.is_authenticated %}
-            <form method="post" class="mb-3">
+            <form method="post" class="mb-3" style=="display: inline;">
                 {% csrf_token %}
-                {% if liked %}
                     <button type="submit" name="unlike" class="btn btn-secondary" disabled>Liked</button>
                 {% else %}
                     <button type="submit" name="like" class="btn btn-primary">Like</button>
