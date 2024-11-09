@@ -150,7 +150,7 @@ def post_detail(request, pk):
 
 @login_required
 def profile_view(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    profile, created = Profile.objects.get_or_create(user=request.user)
     return render(request, 'echoverse/profile.html', {'profile': user_profile})
 
 @login_required
