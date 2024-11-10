@@ -1,0 +1,7 @@
+{% load i18n %}
+{% autoescape off %}
+Hi {{ user.get_full_name|default:user.username }},
+Please click the link below to confirm your email address:
+<a href="{{ activate_url }}">{{ activate_url }}</a>
+Thank you!
+{% endautoescape %}
