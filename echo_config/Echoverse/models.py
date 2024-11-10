@@ -27,11 +27,11 @@ class Post(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
     location = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return f'{self.user.username} profile'
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

@@ -8,10 +8,10 @@
 </head>
 <body>
     <div class="container">
-        <h2 class="mt-5">Edit Profile</h2>
+        <h1 class="mt-5">Edit Profile</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            
+            {{ form.as_p }}
             <div class="form-group">
                 <label for="bio">Bio:</label>
                 <textarea class="form-control" name="bio" id="bio" rows="3">{{ profile.bio }}</textarea>

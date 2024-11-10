@@ -94,8 +94,7 @@ def edit_post(request, pk):
 
 @login_required
 def edit_profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-
+    profile = get_object_or_404(Profile, user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -149,9 +148,10 @@ def post_detail(request, pk):
 
 
 @login_required
-def profile_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    return render(request, 'echoverse/profile.html', {'profile': user_profile})
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = UserProfile.objects.get(user=user)
+    return render(request, 'echoverse/profile.html', {'profile': profile})
 
 @login_required
 @login_required
