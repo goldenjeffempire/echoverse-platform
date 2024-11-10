@@ -198,16 +198,41 @@ def moderate_comments(request):
 
     return render(request, 'echoverse/moderate_comments.html', {'comments': comments})
 
-def comment_view(request):
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
             comment.save()
-            return redirect('post_list')
+            return redirect('post_detail', post_id=post.id)
     else:
         form = CommentForm()
-    return render(request, 'echoverse/comment.html', {'form': form})
+    return render(request, 'echoverse/add_comment.html', {'form': form, 'post': post})
+
+
+def comment_view(request, post_id=None):
+    if post_id:
+        post = get_object_or_404(Post, id=post_id)
+    else:
+        post = None
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            if post:
+                comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect('post_detail', pk=post.id if post else 'post_list')
+    else:
+        form = CommentForm()
+
+    return render(request, 'echoverse/comment.html', {'form': form, 'post': post})
 
 def search_posts(request):
     query = request.GET.get('q')
