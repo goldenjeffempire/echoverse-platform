@@ -234,6 +234,14 @@ def comment_view(request, post_id=None):
 
     return render(request, 'echoverse/comment.html', {'form': form, 'post': post})
 
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    like, created = Like.objects.get_or_create(post=post, user=request.user)
+    if not created:
+        like.delete()
+    return redirect('post_detail', pk=post.id)
+
 def search_posts(request):
     query = request.GET.get('q')
     results = []
