@@ -20,7 +20,7 @@ urlpatterns = [
     path('moderate_comments/', moderate_comments, name='moderate_comments'),
     path('comment/', comment_view, name='comment'),
     path('posts/<int:post_id>/like/', like_post, name='like_post'),
-    path('posts/<int:post_id>/add_comment/', add_comment, name='add_comment'),
+    path('posts/<int:post_id>/comment/', add_comment, name='add_comment'),
     path('search/', views.search_posts, name='search_posts'),
     path('login/', auth_views.LoginView.as_view(template_name='echoverse/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='post_list'), name='logout'),
