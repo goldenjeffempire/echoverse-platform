@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, User
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm, ProfileForm
 from django.core.paginator import Paginator
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
@@ -59,6 +59,9 @@ def login_view(request):
     return render(request, 'echoverse/login.html', {'form': form})
 class CustomLoginView(LoginView):
     template_name = 'echoverse/login.html'
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'echoverse/password_change.html'
+    success_url = '/profile/'
 
     def form_valid(self, form):
         response = super().form_valid(form)
