@@ -9,7 +9,7 @@
 <body>
     <div class="container">
     {% if user.is_authenticated}
-        <h2>Add a Comment to {{ post.title }}</h2>
+        <h2>Comment on {{ post.title }}</h2>
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}

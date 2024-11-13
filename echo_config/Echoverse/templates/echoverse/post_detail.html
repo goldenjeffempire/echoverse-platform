@@ -40,17 +40,16 @@
                 <small>Posted on {{ comment.created_at }}</small>
             </div>
         {% empty %}
-            <p>No comments yet. Be the first to comment!</p>
+            <p>No comments yet.</p>
         {% endfor %}
-
         <a href="{% url 'add_comment' post.id %}">Add a Comment</a>
 
         <h3>Add a Comment</h3>
         {% if user.is_authenticated %}
-            <form method="post">
+            <form method="post" action="{% url 'add_comment' post.id %}">
                 {% csrf_token %}
-                {{ comment_form.as_p }}
-                <button type="submit" class="btn btn-primary">Post Comment</button>
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Add Comment</button>
             </form>
 
         <h3>Tags:</h3>
