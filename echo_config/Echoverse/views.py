@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.contrib.auth import authenticate, login, logout
-from .forms import PostForm, CommentForm
+from .forms import PostForm, CommentForm, ProfileForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 def post_list(request):
     query = request.GET.get('q')
@@ -30,7 +32,8 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            login(request, user)
+            return redirect('home')
     else:
         form = UserCreationForm()
     return render(request, 'echoverse/register.html', {'form': form})
@@ -44,12 +47,30 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                if not hasattr(user, 'profile'):
+                    Profile.objects.create(user=user)
                 return redirect('post_list')
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm()
     return render(request, 'echoverse/login.html', {'form': form})
 class CustomLoginView(LoginView):
     template_name = 'echoverse/login.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        if not hasattr(self.request.user, 'profile'):
+            Profile.objects.create(user=self.request.user)
+
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Invalid username or password.")
+        return super().form_invalid(form)
 
 def logout_view(request):
     logout(request)
@@ -94,7 +115,7 @@ def edit_post(request, pk):
 
 @login_required
 def edit_profile(request):
-    profile = get_object_or_404(Profile, user=request.user)
+    profile = Profile.objects.get(user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -105,7 +126,6 @@ def edit_profile(request):
             messages.error(request, "Please correct the errors below.")
     else:
         form = ProfileForm(instance=profile)
-
     return render(request, 'echoverse/edit_profile.html', {'form': form})
 
 @login_required
@@ -150,10 +170,9 @@ def post_detail(request, pk):
 @login_required
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
-    profile = UserProfile.objects.get(user=user)
+    profile = Profile.objects.get(user=request.user)
     return render(request, 'echoverse/profile.html', {'profile': profile})
 
-@login_required
 @login_required
 def edit_post(request, pk):
     """

@@ -15,4 +15,4 @@ class CommentForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'profile_picture', 'location']
+        fields = ['bio', 'profile_picture', 'location', 'birth_date']
