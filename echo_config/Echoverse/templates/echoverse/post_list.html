@@ -4,32 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Post LIst</title>
+    <title>Posts</title>
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5">Blog Posts</h1>
+        <h1 class="mt-5">Posts</h1>
         <form method="GET" action="" class="form-inline mb-3">
             <input type="text" name="q" class="form-control mr-2" placeholder="Search posts..." value="{{ query }}">
             <button type="submit" class="btn btn-secondary">Search</button>
             <a href="{% url 'create_post' %}" class="btn btn-primary ml-auto">Create New Post</a>
         </form>
 
-        <ul class="list-group">
-    {% for post in page_obj %}
-        <li class="list-group-item">
-            <h5>{{ post.title }}</h5>
-            <p>{{ post.content|truncatewords:30 }}</p>
-            <p><strong>Author:</strong> {{ post.author.username }}</p>
-            <p><strong>Created at:</strong> {{ post.created_at }}</p>
-            <a href="{% url 'post_detail' post.id %}" class="btn btn-info">View</a>
-            <a href="{% url 'edit_post' post.id %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Delete</a>
+    <ul class="list-group">
+        {% for post in page %}
+            <li class="list-group-item">
+                <h5>{{ post.title }}</h5>
+                <p>{{ post.content|truncatewords:30 }}</p>
+                <p><strong>Author:</strong> {{ post.author.username }}</p>
+                <p><strong>Created at:</strong> {{ post.created_at|date:"F j, Y, g:i a" }}</p>
+                <div class="d-flex">
+                <a href="{% url 'post_detail' post.id %}" class="btn btn-info me-2">View</a>
+                <a href="{% url 'edit_post' post.id %}" class="btn btn-warning me-2">Edit</a>
+                <form action="{% url 'delete_post' post.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
+                </form>
+            </div>
         </li>
     {% empty %}
         <li class="list-group-item">No posts available.</li>
     {% endfor %}
-        </ul>
+    </ul>
+
 
     <div class="pagination">
     <span class="step-links">

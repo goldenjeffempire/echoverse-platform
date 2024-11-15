@@ -100,8 +100,8 @@ def create_post(request):
     return render(request, 'echoverse/create_post.html', {'form': form})
 
 @login_required
-def edit_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
 
     if post.author != request.user:
         messages.error(request, "You are not authorized to edit this post.")
@@ -112,7 +112,7 @@ def edit_post(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Post updated successfully.")
-            return redirect('post_detail', pk=post.pk)
+            return redirect('post_list')
         else:
             messages.error(request, "Please correct the errors below.")
     else:

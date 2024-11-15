@@ -8,13 +8,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>Edit Post</h1>
+        <h1>Edit Post: {{ post.title }}</h1>
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Update</button>
+            <button type="submit">Update Post</button>
         </form>
-        <a href="{% url 'post_list' %}">Cancel</a>
+        <a href="{% url 'post_list' %}">Back to Posts</a>
     </div>
 </body>
 </html>
