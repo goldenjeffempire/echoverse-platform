@@ -169,11 +169,17 @@ def post_detail(request, pk):
         'liked': liked,
     })
 
-
 @login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
-    return render(request, 'echoverse/profile.html', {'profile': profile})
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'echoverse/profile.html', {'form': form, 'profile': profile})
 
 @login_required
 def edit_post(request, pk):
