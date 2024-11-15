@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from .forms import PostForm, CommentForm, ProfileForm
 from django.core.paginator import Paginator
@@ -10,6 +11,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.views.generic.edit import CreateView
 
 def post_list(request):
     query = request.GET.get('q')
@@ -35,6 +37,11 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'echoverse/register.html', {'form': form})
+
+class SignUpView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'echoverse/signup.html'
+    success_url = reverse_lazy('login')
 
 def login_view(request):
     if request.method == 'POST':

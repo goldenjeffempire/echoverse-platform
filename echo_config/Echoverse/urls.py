@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import post_list, register, login_view, logout_view, create_post, edit_post, delete_post, post_detail, profile_view, edit_profile, CustomLoginView, CustomLogoutView, moderate_comments, comment_view, search_posts, add_comment, like_post, CustomPasswordChangeView
+from .views import post_list, register, SignUpView, login_view, logout_view, create_post, edit_post, delete_post, post_detail, profile_view, edit_profile, CustomLoginView, CustomLogoutView, moderate_comments, comment_view, search_posts, add_comment, like_post, CustomPasswordChangeView
 from . import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', post_list, name='post_list'),
     path('register/', register, name='register'),
+    path('signup/', SignUpView.as_view(), name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='echoverse/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('posts/', post_list, name='post_list'),
