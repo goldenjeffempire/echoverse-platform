@@ -6,8 +6,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', post_list, name='post_list'),
     path('register/', register, name='register'),
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
+    path('login/', auth_views.LoginView.as_view(template_name='echoverse/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('posts/', post_list, name='post_list'),
     path('create_post/', create_post, name='create_post'),
     path('edit_post/<int:post_id>/', edit_post, name='edit_post'),

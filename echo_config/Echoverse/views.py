@@ -32,8 +32,6 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            login(request, user)
-            return redirect('home')
     else:
         form = UserCreationForm()
     return render(request, 'echoverse/register.html', {'form': form})
