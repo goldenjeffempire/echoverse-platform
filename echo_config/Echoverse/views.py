@@ -272,6 +272,9 @@ def like_post(request, post_id):
 def search_posts(request):
     query = request.GET.get('q')
     results = []
-    if query:
-        results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
-    return render(request, 'echoverse/search_results.html', {'results': results, 'query': query})
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
+    return render(request, 'echoverse/search.html', {'form': form, 'results': results})

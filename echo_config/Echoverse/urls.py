@@ -25,4 +25,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='echoverse/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='post_list'), name='logout'),
     path('profile/change-password/', CustomPasswordChangeView.as_view(), name='password_change'),
+    path('search/', search_posts, name='search_posts'),
 ]
