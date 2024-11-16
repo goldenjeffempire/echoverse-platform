@@ -9,15 +9,14 @@
 <body>
     <div class="container">
         <h1 class="mt-5">{{ profile.user.username }}'s Profile</h1>
+            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="150" height="150">
+            {% else %}
+                <p class ="text-muted">No profile picture uploaded.</p>
+            {% endif %}
         <div class="profile-info mb-4 p-3 border rounded bg-light">
             <p><strong>Bio:</strong> {{ profile.bio }}</p>
             <p><strong>Location:</strong> {{ profile.location }}</p>
             <p><strong>Birth Date:</strong> {{ profile.birth_date }}</p>
-            {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail" style="max-width: 200px;">
-            {% else %}
-                <p class ="text-muted">No profile picture uploaded.</p>
-            {% endif %}
         </div>
 
         <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>

@@ -176,7 +176,7 @@ def post_detail(request, pk):
 
 @login_required
 def profile_view(request):
-    profile = request.user.profile
+    profile = get_object_or_404(UserProfile, user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -188,9 +188,6 @@ def profile_view(request):
 
 @login_required
 def edit_post(request, pk):
-    """
-    Handles editing of a post by the logged-in user.
-    """
     post = get_object_or_404(Post, pk=pk)
 
     # Ensure the logged-in user is the author of the post
