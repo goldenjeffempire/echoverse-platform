@@ -246,6 +246,31 @@ def add_comment(request, post_id):
     return render(request, 'echoverse/add_comment.html', {'form': form, 'post': post})
 
 @login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user != comment.author:
+        return HttpResponseForbidden("You are not allowed to edit this comment.")
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('view_post', post_id=comment.post.id)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'echoverse/edit_comment.html', {'form': form, 'comment': comment})
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user != comment.author:
+        return HttpResponseForbidden("You are not allowed to delete this comment.")
+    
+    post_id = comment.post.id
+    comment.delete()
+    return redirect('view_post', post_id=post_id)
+
+@login_required
 def view_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     comments = post.comments.all()

@@ -54,6 +54,13 @@ class Comment(models.Model):
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
 
+def edit_comment(self, new_content):
+    self.content = new_content
+    self.save()
+
+def delete_comment(self):
+    self.delete()
+
 class Like(models.Model):
     post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

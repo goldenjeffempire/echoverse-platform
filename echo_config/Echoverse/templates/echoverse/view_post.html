@@ -19,6 +19,11 @@
                 <li class="list-group-item">
                     <strong>{{ comment.author }}:</strong> {{ comment.content }}<br>
                     <small class="text-muted">Posted on {{ comment.created_at }}</small>
+                    {% if comment.author == request.user %}
+                        <br>
+                        <a href="{% url 'edit_comment' comment.id %}">Edit</a>
+                        <a href="{% url 'delete_comment' comment.id %}">Delete</a>
+                    {% endif %}
                 </li>
             {% empty %}
                 <li class="list-group-item">No comments yet.</li>
