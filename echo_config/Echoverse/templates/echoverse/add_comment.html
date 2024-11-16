@@ -9,13 +9,13 @@
 <body>
     <div class="container">
     {% if user.is_authenticated}
-        <h2>Comment on {{ post.title }}</h2>
+        <h1>Comment on {{ post.title }}</h1>
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
                  <button type="submit" class="btn btn-primary">Add Comment</button>
             </form>
-            <a href="{% url 'post_detail' post.id %}">Cancel</a>
+            <a href="{% url 'view_post' post.id %}">Back to Post</a>
         {% else %}
             <p>You must be <a href="{% url 'login' %}">logged in</a> to comment.</p>
         {% endif %}

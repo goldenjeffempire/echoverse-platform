@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>View Post {{ post.title }} - Comments</title>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.content }}</p>
+        <p><strong>Author:</strong> {{ post.author }}</p>
+        <p><strong>Created at:</strong> {{ post.created_at }}</p>
+
+        <h2 class="mt-4">Comments</h2>
+        <ul class="list-group mb-4">
+            {% for comment in comments %}
+                <li class="list-group-item">
+                    <strong>{{ comment.author }}:</strong> {{ comment.content }}<br>
+                    <small class="text-muted">Posted on {{ comment.created_at }}</small>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No comments yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if user.is_authenticated %}
+            <h3>Add a Comment</h3>
+            <form method="post" action="{% url 'add_comment' post.id %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Submit Comment</button>
+                <a href="{% url 'post_detail' post.id %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        {% else %}
+            <p class="alert alert-warning">
+                You must be <a href="{% url 'login' %}">logged in</a> to comment.
+            </p>
+        {% endif %}
+
+        <!-- Back to Posts -->
+        <p class="mt-4">
+            <a href="{% url 'post_list' %}" class="btn btn-info">Back to Posts</a>
+        </p>
+    </div>
+</body>
+</html>

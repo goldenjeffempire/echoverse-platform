@@ -240,11 +240,16 @@ def add_comment(request, post_id):
             comment.post = post
             comment.user = request.user
             comment.save()
-            return redirect('post_detail', post_id=post.id)
+            return redirect('post_list')
     else:
         form = CommentForm()
     return render(request, 'echoverse/add_comment.html', {'form': form, 'post': post})
 
+@login_required
+def view_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comments = post.comments.all()
+    return render(request, 'echoverse/view_post.html', {'post': post, 'comments': comments})
 
 def comment_view(request, post_id=None):
     if post_id:
