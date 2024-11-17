@@ -1,0 +1,16 @@
+Hi {{ user.username }},
+
+Thank you for signing up with Echoverse! We're excited to have you as part of our community.
+
+To get started, please confirm your email address by clicking the link below:
+
+{{ activate_url }}
+
+If you did not sign up for an account, please disregard this email. Your account will not be activated unless you confirm your email address.
+
+If you need any assistance or have any questions, feel free to reach out to our support team.
+
+Thank you for choosing Echoverse!
+
+Best regards,  
+The Echoverse Team

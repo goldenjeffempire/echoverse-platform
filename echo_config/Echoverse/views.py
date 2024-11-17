@@ -3,7 +3,7 @@ from .models import BlogPost, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from .forms import BlogPostForm, CommentForm, ProfileForm
+from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
@@ -12,6 +12,12 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.views.generic.edit import CreateView
+from django.core.mail import send_mail
+
+def some_view(request):
+    from Echoverse.forms import CustomSignupForm
+    form = CustomSignupForm()
+    return render(request, 'some_template.html', {'form': form})
 
 def post_list(request):
     query = request.GET.get('q')
@@ -29,22 +35,20 @@ def post_list(request):
         'query': query,
     })
 
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            return redirect('login')
-    else:
-        form = UserCreationForm()
-    return render(request, 'echoverse/register.html', {'form': form})
-
 class SignUpView(CreateView):
-    form_class = UserCreationForm
+    form_class = SignupForm
     template_name = 'echoverse/signup.html'
     success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        send_mail(
+            'Welcome to EchoVerse!',
+            'Thank you for signing up.',
+            'from@example.com',
+            [form.cleaned_data['email']],
+            fail_silently=False,
+        )
+        return super().form_valid(form)
 
 def login_view(request):
     if request.method == 'POST':

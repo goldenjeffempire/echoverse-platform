@@ -22,13 +22,20 @@ class ProfileForm(forms.ModelForm):
 class SearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)
 
-class UserRegistrationForm(UserCreationForm):
+class SignupForm(UserCreationForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(max_length=254, required=True)
 
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+    def save(self, request):
+        user = super().save(request)
+        user.email = self.cleaned_data['email']
+        user.save()
+        return user
 
     def clean(self):
         cleaned_data = super().clean()

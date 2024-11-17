@@ -1,7 +1,36 @@
 {% load i18n %}
-{% autoescape off %}
-Hi {{ user.get_full_name|default:user.username }},
-Please click the link below to confirm your email address:
-<a href="{{ activate_url }}">{{ activate_url }}</a>
-Thank you!
-{% endautoescape %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Email Confirmation</title>
+</head>
+<body>
+
+    <div class="container">
+        <div class="text-center">
+            <h2>Hello {{ user.get_full_name|default:user.username }},</h2>
+        </div>
+
+        <p>Thank you for signing up! Please confirm your email address by clicking the link below:</p>
+
+        <div class="text-center">
+            <a href="{{ activate_url }}" class="btn btn-primary btn-lg">
+                Confirm Email Address
+            </a>
+        </div>
+
+        <p>If you did not sign up, please ignore this email.</p>
+
+        <p>Thank you!</p>
+        <p>Best regards, <br> The Echoverse Team</p>
+    </div>
+
+    <footer class="text-center">
+        <p>&copy; {{ current_year }} Echoverse. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
