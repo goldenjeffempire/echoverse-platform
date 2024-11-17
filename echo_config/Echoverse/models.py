@@ -11,13 +11,13 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-class Post(models.Model):
-    title = models.CharField(max_length=200)
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
     content = models.TextField()
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.CharField(max_length=100)
 
     def __str__(self):
         return self.title
@@ -45,7 +45,7 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    post = models.ForeignKey(BlogPost, related_name='comments', on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -62,7 +62,7 @@ def delete_comment(self):
     self.delete()
 
 class Like(models.Model):
-    post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
+    post = models.ForeignKey(BlogPost, related_name='likes', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:

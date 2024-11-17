@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Profile, Comment, Like
+from .models import BlogPost, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from .forms import PostForm, CommentForm, ProfileForm
+from .forms import BlogPostForm, CommentForm, ProfileForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
@@ -16,9 +16,9 @@ from django.views.generic.edit import CreateView
 def post_list(request):
     query = request.GET.get('q')
     if query:
-        posts = Post.objects.filter(title__icontains=query)
+        posts = BlogPost.objects.filter(title__icontains=query)
     else:
-        posts = Post.objects.all().order_by('-created_at')
+        posts = BlogPost.objects.all().order_by('-created_at')
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
@@ -89,26 +89,26 @@ class CustomLogoutView(LogoutView):
 @login_required
 def create_post(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = BlogPostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
             return redirect('post_list')
     else:
-        form = PostForm()
+        form = BlogPostForm()
     return render(request, 'echoverse/create_post.html', {'form': form})
 
 @login_required
-def edit_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def edit_post(request, pk):
+    post = get_object_or_404(BlogPost, pk=pk)
 
     if post.author != request.user:
         messages.error(request, "You are not authorized to edit this post.")
         return redirect('post_list')
 
     if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
+        form = BlogPostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
             messages.success(request, "Post updated successfully.")
@@ -116,7 +116,7 @@ def edit_post(request, post_id):
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        form = PostForm(instance=post)
+        form = BlogPostForm(instance=post)
 
     return render(request, 'echoverse/edit_post.html', {'form': form, 'post': post})
 
@@ -137,8 +137,8 @@ def edit_profile(request):
     return render(request, 'echoverse/edit_profile.html', {'form': form})
 
 @login_required
-def delete_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def delete_post(request, pk):
+    post = get_object_or_404(BlogPost, id=post_id)
     if post.author != request.user:
         return redirect('post_list')
     if request.method == 'POST':
@@ -148,7 +148,7 @@ def delete_post(request, post_id):
 
 @login_required
 def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = get_object_or_404(BlogPost, pk=pk)
     comments = post.comments.all()
     liked = post.likes.filter(user=request.user).exists()
 
@@ -185,28 +185,6 @@ def profile_view(request):
     else:
         form = ProfileForm(instance=profile)
     return render(request, 'echoverse/profile.html', {'form': form, 'profile': profile})
-
-@login_required
-def edit_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-
-    # Ensure the logged-in user is the author of the post
-    if post.author != request.user:
-        messages.error(request, 'You are not authorized to edit this post.')
-        return redirect('post_list')
-
-    if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'The post has been successfully updated.')
-            return redirect('post_list')
-        else:
-            messages.error(request, 'There was an error updating the post. Please try again.')
-    else:
-        form = PostForm(instance=post)
-
-    return render(request, 'echoverse/edit_post.html', {'form': form, 'post': post})
 
 @staff_member_required
 def moderate_comments(request):
@@ -262,7 +240,7 @@ def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.user != comment.author:
         return HttpResponseForbidden("You are not allowed to delete this comment.")
-    
+
     post_id = comment.post.id
     comment.delete()
     return redirect('view_post', post_id=post_id)

@@ -8,12 +8,12 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5">Create Post</h1>
+        <h1 class="mt-5">Create New Post</h1>
         <form method="POST" class="mt-3">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Create Post</button>
-            <a href="{% url 'post_list' %}">Back to Post</a>
+            <p><a href="{% url 'post_list' %}">Back to Posts</a></p>
         </form>
     </div>
 </body>
