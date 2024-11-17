@@ -179,7 +179,7 @@ def post_detail(request, pk):
 
 @login_required
 def profile_view(request):
-    profile = get_object_or_404(UserProfile, user=request.user)
+    profile = get_object_or_404(Profile, user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
