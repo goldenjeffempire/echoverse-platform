@@ -46,13 +46,3 @@ Echoverse is an advanced AI-driven blog platform designed to revolutionize conte
 ```bash  
 git clone https://github.com/<your-username>/echoverse-platform.git  
 cd echoverse-platform ``` 
-
-### Step 2: Install Dependencies
-``` bash
-pip install -r requirements.txt
-
-### Step 3: Set Up AI Modules
-- Install AI-specific libraries:
-pip install openai scikit-learn pandas nltk
-- Add your AI API key in the .env file:
-AI_API_KEY=your_openai_api_key
