@@ -34,6 +34,9 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            return redirect('login')
     else:
         form = UserCreationForm()
     return render(request, 'echoverse/register.html', {'form': form})

@@ -22,13 +22,13 @@ class ProfileForm(forms.ModelForm):
 class SearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)
 
-class UserRegistrationForm(forms.ModelForm):
+class UserRegistrationForm(UserCreationForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password1', 'password2']
 
     def clean(self):
         cleaned_data = super().clean()
