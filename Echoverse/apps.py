@@ -7,5 +7,3 @@ class EchoverseConfig(AppConfig):
 
     def ready(self):
         import Echoverse.signals
-git add .
-git commit -m "Added email verification for user registration"
