@@ -18,15 +18,23 @@ from django.core.mail import send_mail
 
 openai.api_key = settings.OPENAI_API_KEY
 
-def generate_recommendations(post_content):
+def generate_personalized_recommendations(user, post_content):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=f"Suggest blog posts related to this content: {post_content}",
         max_tokens=150
     )
 
+    user_interactions = UserInteraction.objects.filter(user=user)
+    interacted_posts = [interaction.post for interaction in user_interactions]
+
+    similar_posts = Post.objects.filter(id__in=[post.id for post in interacted_posts])
+
+    ai_recommendations = generate_recommendations(post_content)
+    personalized_recommendations = similar_posts
+
     recommendations = response.choices[0].text.strip()
-    return recommendations
+    return ai_recommendations, personalized_recommendations
 
 def some_view(request):
     from Echoverse.forms import CustomSignupForm
@@ -175,6 +183,7 @@ def post_detail(request, pk):
         tag, created = Tag.objects.get_or_create(name=tag_name)
         post.tags.add(tag)
 
+    ai_recommendations, personalized_recommendations = generate_personalized_recommendations(request.user, post.content)
     recommended_posts = generate_recommendations(post.content)
     similar_posts = Post.objects.filter(title__icontains=recommended_posts[:100])[:5]
 
@@ -202,7 +211,8 @@ def post_detail(request, pk):
         'comment_form': comment_form,
         'liked': liked,
         'similar_posts': similar_posts,
-        'recommendations': recommended_posts,
+        'ai_recommendations': ai_recommendations,
+        'personalized_recommendations': personalized_recommendations,
         'tags': post.tags.all()
     })
 
@@ -213,15 +223,16 @@ def post_interaction(request, post_id):
     interaction, created = UserInteraction.objects.get_or_create(user=user, post=post)
 
     if 'like' in request.POST:
-        interaction.liked = not interaction.liked
+        user_interaction.liked = not user_interaction.liked
     elif 'comment' in request.POST:
         interaction.comment = request.POST['comment']
 
-    interaction.save()
+    user_interaction.save()
 
-    return JsonResponse({
+    return redirect JsonResponse({
         'liked': interaction.liked,
-        'comment': interaction.comment
+        'comment': interaction.comment,
+        'post_detail', post_id=post_id
     })
 
 @login_required
@@ -235,6 +246,12 @@ def profile_view(request):
     else:
         form = ProfileForm(instance=profile)
     return render(request, 'echoverse/profile.html', {'form': form, 'profile': profile})
+
+@login_required
+def user_dashboard(request):
+    interactions = UserInteraction.objects.filter(user=request.user)
+    return render(request, 'echoverse/user_dashboard.html', {
+        'interactions': interactions
 
 @staff_member_required
 def moderate_comments(request):

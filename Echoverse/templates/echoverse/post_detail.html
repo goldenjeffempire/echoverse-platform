@@ -14,54 +14,47 @@
         <p>{{ post.content }}</p>
         <p>Category: {{ post.category.name if post.category else "No category" }}</p>
 
-        <h3>Likes: {{ post.likes.count }}</h3>     
+        <!-- Like and Comment Form -->
+        <form method="POST" action="{% url 'post_interaction' post.id %}">
+            {% csrf_token %}
+            <button type="submit" name="like">
+                {% if user in post.likes.all %}
+                    Unlike
+                {% else %}
+                    Like
+                {% endif %}
+            </button>
+
+            <textarea name="comment" rows="4" cols="50" placeholder="Leave a comment"></textarea>
+            <button type="submit">Submit Comment</button>
+        </form>
+
+        <!-- Likes Count -->
+        <h3>Likes: {{ post.likes.count }}</h3>
+
         {% if user.is_authenticated %}
-        <form action="{% url 'like_post' post.id %}" method="POST"
-            <form method="post" class="mb-3" style=="display: inline;">
-                {% csrf_token %}
-                <button type="submit">
-                    {% if user in post.likes.all.values_list('user', flat=True) %}
-                        Unlike
-                    {% else %}
-                        Like
-                    {% endif %}
-                </button>
-            </form>
+            <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Post List</a>
         {% else %}
             <p>You must be <a href="{% url 'login' %}">logged in</a> to like or comment.</p>
         {% endif %}
 
-        <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Post List</a>
-
         <h3>Comments:</h3>
-        <ul>
-            {% for interaction in post.userinteraction_set.all %}
-                <li>{{ interaction.comment }} - <strong>{{ interaction.user.username }}</strong></li>
-            {% endfor %}
-        </ul>
+        {% if post.comments.exists %}
+            <ul>
+                {% for comment in post.comments.all %}
+                    <li>
+                        <strong>{{ comment.user.username }}</strong> on {{ comment.created_at }}:
+                        <p>{{ comment.text }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endif %}
 
-        <form method="POST" action="{% url 'post_interaction' post.id %}">
-            {% csrf_token %}
-            <label for="comment">Add a comment:</label>
-            <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
-            <button type="submit">Submit Comment</button>
-        </form>
-
-        <h3 class="mt-5">Comments</h3>
-        {% for comment in post.comments.all %}
-            <div class="mb-2">
-                <strong>{{ comment.user.username }}</strong> on {{ comment.created_at }}:
-                <p>{{ comment.text }}</p>
-                <small>Posted on {{ comment.created_at }}</small>
-            </div>
-        {% empty %}
-            <p>No comments yet.</p>
-        {% endfor %}
-        <a href="{% url 'add_comment' post.id %}">Add a Comment</a>
-
-        <h3>Add a Comment</h3>
         {% if user.is_authenticated %}
-            <form method="post" action="{% url 'add_comment' post.id %}">
+            <h3>Add a Comment</h3>
+            <form method="POST" action="{% url 'add_comment' post.id %}">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Add Comment</button>
@@ -77,15 +70,19 @@
             {% endfor %}
         </ul>
 
-        <h3>Recommended Posts</h3>
+        <h3>Personalized Recommendations</h3>
         <ul>
-            {% for recommended_post in similar_posts %}
+            {% for recommended_post in personalized_recommendations %}
                 <li><a href="{% url 'post_detail' recommended_post.id %}">{{ recommended_post.title }}</a></li>
             {% endfor %}
         </ul>
 
-        <h3>AI Generated Suggestions</h3>
-        <p>{{ recommendations }}</p>
+        <h3>AI-Generated Recommendations</h3>
+        <ul>
+            {% for recommended_post in ai_recommendations %}
+                <li><a href="{% url 'post_detail' recommended_post.id %}">{{ recommended_post }}</a></li>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>
