@@ -1,3 +1,5 @@
+import openai
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import BlogPost, Category, UserInteraction, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
@@ -13,6 +15,18 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
+
+openai.api_key = settings.OPENAI_API_KEY
+
+def generate_recommendations(post_content):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=f"Suggest blog posts related to this content: {post_content}",
+        max_tokens=150
+    )
+
+    recommendations = response.choices[0].text.strip()
+    return recommendations
 
 def some_view(request):
     from Echoverse.forms import CustomSignupForm
@@ -156,6 +170,14 @@ def delete_post(request, pk):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(BlogPost, pk=pk)
+    tags = generate_tags(post.content)
+    for tag_name in tags:
+        tag, created = Tag.objects.get_or_create(name=tag_name)
+        post.tags.add(tag)
+
+    recommended_posts = generate_recommendations(post.content)
+    similar_posts = Post.objects.filter(title__icontains=recommended_posts[:100])[:5]
+
     comments = post.comments.all()
     liked = post.likes.filter(user=request.user).exists()
 
@@ -179,6 +201,9 @@ def post_detail(request, pk):
         'comments': comments,
         'comment_form': comment_form,
         'liked': liked,
+        'similar_posts': similar_posts,
+        'recommendations': recommended_posts,
+        'tags': post.tags.all()
     })
 
 def post_interaction(request, post_id):
@@ -250,7 +275,7 @@ def edit_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if request.user != comment.author:
         return HttpResponseForbidden("You are not allowed to edit this comment.")
-    
+
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
@@ -313,3 +338,32 @@ def search_posts(request):
             query = form.cleaned_data['query']
             results = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
     return render(request, 'echoverse/search.html', {'form': form, 'results': results})
+
+def generate_tags(post_content):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=f"Generate tags for the following blog post content: {post_content}",
+        max_tokens=50
+    )
+
+    tags_text = response.choices[0].text.strip()
+    tags = [tag.strip() for tag in tags_text.split(',')]
+    return tags
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    tags = generate_tags(post.content)
+    for tag_name in tags:
+        tag, created = Tag.objects.get_or_create(name=tag_name)
+        post.tags.add(tag)
+
+    recommended_posts = generate_recommendations(post.content)
+    similar_posts = Post.objects.filter(title__icontains=recommended_posts[:100])[:5]
+
+    return render(request, 'echoverse/post_detail.html', {
+        'post': post,
+        'similar_posts': similar_posts,
+        'recommendations': recommended_posts,
+        'tags': post.tags.all()
+    })

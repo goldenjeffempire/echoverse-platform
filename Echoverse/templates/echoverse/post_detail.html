@@ -71,11 +71,21 @@
         {% endif %}
 
         <h3>Tags:</h3>
-        <p>
+        <ul>
             {% for tag in post.tags.all %}
                 <span class="badge badge-info">{{ tag.name }}</span>
             {% endfor %}
-        </p>
+        </ul>
+
+        <h3>Recommended Posts</h3>
+        <ul>
+            {% for recommended_post in similar_posts %}
+                <li><a href="{% url 'post_detail' recommended_post.id %}">{{ recommended_post.title }}</a></li>
+            {% endfor %}
+        </ul>
+
+        <h3>AI Generated Suggestions</h3>
+        <p>{{ recommendations }}</p>
     </div>
 </body>
 </html>
