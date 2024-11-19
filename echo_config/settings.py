@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'Echoverse',
+    'rest_framework',
 ]
 
 SITE_ID = 1
