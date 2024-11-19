@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import BlogPost, Profile, Comment, Like
+from .models import BlogPost, Category, UserInteraction, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
@@ -9,7 +9,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
@@ -179,6 +179,24 @@ def post_detail(request, pk):
         'comments': comments,
         'comment_form': comment_form,
         'liked': liked,
+    })
+
+def post_interaction(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    interaction, created = UserInteraction.objects.get_or_create(user=user, post=post)
+
+    if 'like' in request.POST:
+        interaction.liked = not interaction.liked
+    elif 'comment' in request.POST:
+        interaction.comment = request.POST['comment']
+
+    interaction.save()
+
+    return JsonResponse({
+        'liked': interaction.liked,
+        'comment': interaction.comment
     })
 
 @login_required

@@ -12,6 +12,7 @@
         <p><strong>Author:</strong> {{ post.author.username }}</p>
         <p><strong>Created at:</strong> {{ post.created_at }}</p>
         <p>{{ post.content }}</p>
+        <p>Category: {{ post.category.name if post.category else "No category" }}</p>
 
         <h3>Likes: {{ post.likes.count }}</h3>     
         {% if user.is_authenticated %}
@@ -32,6 +33,20 @@
 
         <a href="{% url 'post_list' %}" class="btn btn-secondary">Back to Post List</a>
 
+        <h3>Comments:</h3>
+        <ul>
+            {% for interaction in post.userinteraction_set.all %}
+                <li>{{ interaction.comment }} - <strong>{{ interaction.user.username }}</strong></li>
+            {% endfor %}
+        </ul>
+
+        <form method="POST" action="{% url 'post_interaction' post.id %}">
+            {% csrf_token %}
+            <label for="comment">Add a comment:</label>
+            <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
+            <button type="submit">Submit Comment</button>
+        </form>
+
         <h3 class="mt-5">Comments</h3>
         {% for comment in post.comments.all %}
             <div class="mb-2">
@@ -51,6 +66,9 @@
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Add Comment</button>
             </form>
+        {% else %}
+            <p>You must be logged in to add a comment.</p>
+        {% endif %}
 
         <h3>Tags:</h3>
         <p>

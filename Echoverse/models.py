@@ -5,6 +5,10 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.conf import settings
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField()
+
 class Tag(models.Model):
     name = models.CharField(max_length=200)
 
@@ -17,7 +21,10 @@ class BlogPost(models.Model):
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    author = models.CharField(max_length=100)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -70,3 +77,12 @@ class Like(models.Model):
 
     def __str__(self):
         return f'Like by {self.user.username} on {self.post.title}'
+
+class UserInteraction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    liked = models.BooleanField(default=False)
+    comment = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} interaction with {self.post.title}"

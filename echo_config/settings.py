@@ -122,8 +122,12 @@ WSGI_APPLICATION = 'echo_config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'echoverse_db',
+        'USER': 'echoverse',
+        'PASSWORD': 'Echoverse124@',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
