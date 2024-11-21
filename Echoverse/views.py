@@ -229,10 +229,10 @@ def post_interaction(request, post_id):
 
     user_interaction.save()
 
-    return redirect JsonResponse({
+    return JsonResponse({
         'liked': interaction.liked,
         'comment': interaction.comment,
-        'post_detail', post_id=post_id
+        'post_detail': post_id
     })
 
 @login_required
@@ -252,6 +252,7 @@ def user_dashboard(request):
     interactions = UserInteraction.objects.filter(user=request.user)
     return render(request, 'echoverse/user_dashboard.html', {
         'interactions': interactions
+    })
 
 @staff_member_required
 def moderate_comments(request):
