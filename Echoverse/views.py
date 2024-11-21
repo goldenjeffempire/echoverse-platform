@@ -15,6 +15,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
+from .moderation import moderate_content
 
 openai.api_key = settings.OPENAI_API_KEY
 
@@ -220,12 +221,20 @@ def post_interaction(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     user = request.user
 
-    interaction, created = UserInteraction.objects.get_or_create(user=user, post=post)
+    comment = request.POST.get('comment', '')
+    if comment and moderate_content(comment):
+        # If flagged, show an error message
+        return render(request, 'echoverse/post_detail.html', {
+            'post': post,
+            'error_message': 'Your comment has been flagged due to inappropriate content.'
+        })
+
+    user_interaction, created = UserInteraction.objects.get_or_create(user=user, post=post)
 
     if 'like' in request.POST:
         user_interaction.liked = not user_interaction.liked
-    elif 'comment' in request.POST:
-        interaction.comment = request.POST['comment']
+    if comment:
+        user_interaction.comment = comment
 
     user_interaction.save()
 

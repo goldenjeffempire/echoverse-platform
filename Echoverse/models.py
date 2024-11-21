@@ -83,6 +83,7 @@ class UserInteraction(models.Model):
     post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
     liked = models.BooleanField(default=True)
     comment = models.TextField(blank=True, null=True)
+    flagged = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -20,6 +20,9 @@
                         </h5>
                         <p><strong>Comment:</strong> {{ interaction.comment }}</p>
                         <p><strong>Liked:</strong> {{ interaction.liked|yesno:"Yes,No" }}</p>
+                        {% if interaction.flagged %}
+                            <span style="color: red;">This content has been flagged for review.</span>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
