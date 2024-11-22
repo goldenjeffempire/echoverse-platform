@@ -29,6 +29,25 @@
         {% else %}
             <p class="text-center text-muted">No interactions yet.</p>
         {% endif %}
+
+        <h2>Recommended for You</h2>
+
+        {% if recommended_posts %}
+            <ul class="recommended-posts">
+                {% for post in recommended_posts %}
+                    <li class="recommended-post">
+                        <a href="{% url 'post_detail' post.id %}" class="post-title">{{ post.title }}</a>
+                        <p class="post-excerpt">{{ post.excerpt }}</p>
+                        <div class="post-meta">
+                            <span class="post-author">By {{ post.author.username }}</span>
+                            <span class="post-date">{{ post.created_at|date:"F j, Y" }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recommended posts available at the moment.</p>
+        {% endif %}
     </div>
 </body>
 </html>

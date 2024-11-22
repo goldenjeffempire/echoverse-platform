@@ -45,3 +45,6 @@ class SignupForm(UserCreationForm):
         if password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
         return cleaned_data
+
+class AIContentForm(forms.Form):
+    prompt = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Enter your content idea or prompt here...'}))

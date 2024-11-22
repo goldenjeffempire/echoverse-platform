@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import post_list, SignUpView, login_view, logout_view, create_post, edit_post, delete_post, post_detail, profile_view, edit_profile, CustomLoginView, CustomLogoutView, moderate_comments, comment_view, search_posts, view_post, add_comment, edit_comment, delete_comment, like_post, CustomPasswordChangeView, post_interaction
+from .views import post_list, SignUpView, login_view, logout_view, create_post, edit_post, delete_post, post_detail, profile_view, edit_profile, CustomLoginView, CustomLogoutView, moderate_comments, comment_view, search_posts, view_post, add_comment, edit_comment, delete_comment, like_post, CustomPasswordChangeView, post_interaction, generate_content
 from . import views
 from django.contrib.auth import views as auth_views
 
@@ -31,4 +31,5 @@ urlpatterns = [
     path('profile/change-password/', CustomPasswordChangeView.as_view(), name='password_change'),
     path('search/', search_posts, name='search_posts'),
     path('post/<int:post_id>/interact/', views.post_interaction, name='post_interaction'),
+    path('generate-content/', generate_content, name='generate_content'),
 ]

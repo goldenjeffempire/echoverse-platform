@@ -5,7 +5,7 @@ from .models import BlogPost, Category, UserInteraction, Profile, Comment, Like
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm
+from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm, AIContentForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
@@ -16,6 +16,8 @@ from django.contrib import messages
 from django.views.generic.edit import CreateView
 from django.core.mail import send_mail
 from .moderation import moderate_content
+from .recommendation import recommend_posts_for_user
+from .ai_content import generate_blog_post
 
 openai.api_key = settings.OPENAI_API_KEY
 
@@ -36,6 +38,18 @@ def generate_personalized_recommendations(user, post_content):
 
     recommendations = response.choices[0].text.strip()
     return ai_recommendations, personalized_recommendations
+
+def generate_content(request):
+    generated_content = None
+    if request.method == 'POST':
+        form = AIContentForm(request.POST)
+        if form.is_valid():
+            prompt = form.cleaned_data['prompt']
+            generated_content = generate_blog_post(prompt)
+    else:
+        form = AIContentForm()
+
+    return render(request, 'echoverse/generate_content.html', {'form': form, 'generated_content': generated_content})
 
 def some_view(request):
     from Echoverse.forms import CustomSignupForm
@@ -188,6 +202,11 @@ def post_detail(request, pk):
     recommended_posts = generate_recommendations(post.content)
     similar_posts = Post.objects.filter(title__icontains=recommended_posts[:100])[:5]
 
+    if request.user.is_authenticated:
+        user_interaction, created = UserInteraction.objects.get_or_create(user=request.user, post=post)
+        user_interaction.viewed = True
+        user_interaction.save()
+
     comments = post.comments.all()
     liked = post.likes.filter(user=request.user).exists()
 
@@ -258,10 +277,14 @@ def profile_view(request):
 
 @login_required
 def user_dashboard(request):
-    interactions = UserInteraction.objects.filter(user=request.user)
-    return render(request, 'echoverse/user_dashboard.html', {
-        'interactions': interactions
-    })
+    user_interactions = UserInteraction.objects.filter(user=request.user)
+    recommended_posts = recommend_posts_for_user(request.user)
+
+    context = {
+        'interactions': user_interactions,
+        'recommended_posts': recommended_posts,
+    }
+    return render(request, 'echoverse/user_dashboard.html', context)
 
 @staff_member_required
 def moderate_comments(request):

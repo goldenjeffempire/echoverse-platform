@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Content Generation</title>
+</head>
+<body>
+    <h2>AI-Powered Content Generation</h2>
+    <div class="content-gen-form">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="submit-btn">Generate Content</button>
+        </form>
+
+        <div class="loading-spinner">
+            <img src="https://i.imgur.com/4U7gJjL.gif" alt="Loading...">
+        </div>
+
+        {% if generated_content %}
+            <div class="generated-content">
+                <h3>Generated Content:</h3>
+                <div class="content-text">
+                    <p>{{ generated_content }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
