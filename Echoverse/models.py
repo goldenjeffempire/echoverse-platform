@@ -7,21 +7,28 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
+
 def validate_image(file):
     """Validator to ensure only valid image files are uploaded."""
     valid_extensions = ('.png', '.jpg', '.jpeg')
-    if not file.name.endswith(valid_extensions):
+    if not file.name.lower().endswith(valid_extensions):
         raise ValidationError("Only .png, .jpg, and .jpeg formats are supported.")
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.name
+
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=255)
@@ -40,6 +47,7 @@ class BlogPost(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
@@ -50,14 +58,17 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 class Comment(models.Model):
     post = models.ForeignKey(BlogPost, related_name='comments', on_delete=models.CASCADE)
@@ -69,12 +80,6 @@ class Comment(models.Model):
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
 
-def edit_comment(self, new_content):
-    self.content = new_content
-    self.save()
-
-def delete_comment(self):
-    self.delete()
 
 class Like(models.Model):
     post = models.ForeignKey(BlogPost, related_name='likes', on_delete=models.CASCADE)
@@ -82,11 +87,12 @@ class Like(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraints(fields = ('post', 'user'), name='unique_post_user_like')
+            models.UniqueConstraint(fields=['post', 'user'], name='unique_post_user_like')
         ]
 
     def __str__(self):
         return f'Like by {self.user.username} on {self.post.title}'
+
 
 class UserInteraction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -99,6 +105,7 @@ class UserInteraction(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.post.title}'
+
 
 class Rating(models.Model):
     post = models.ForeignKey(BlogPost, related_name='ratings', on_delete=models.CASCADE)
@@ -119,16 +126,14 @@ class Rating(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Rating by {self.author.username} for {self.blog_post.title}"
+        return f"Rating by {self.author.username} for {self.post.title}"
+
 
 class Review(models.Model):
     post = models.ForeignKey(BlogPost, related_name='reviews', on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
-    )
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Review by {self.author.username} for {self.blog_post.title}"
+        return f"Review by {self.author.username} for {self.post.title}"
