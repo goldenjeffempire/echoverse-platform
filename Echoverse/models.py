@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-
+from .utils import moderate_content
 
 def validate_image(file):
     """Validator to ensure only valid image files are uploaded."""
@@ -98,6 +98,10 @@ class BlogPost(models.Model):
             ratings_vector.append(rating)
         return ratings_vector
 
+    def save(self, *args, **kwargs):
+        if not moderate_content(self.content):
+            raise ValueError("Inappropriate content detected in blog post.")
+        super().save(*args, **kwargs)
 
 class Rating(models.Model):
     author = models.ForeignKey(
@@ -146,6 +150,10 @@ class Comment(models.Model):
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
 
+    def save(self, *args, **kwargs):
+        if not moderate_content(self.content):
+            raise ValueError("Inappropriate content detected in comment.")
+        super().save(*args, **kwargs)
 
 class Like(models.Model):
     post = models.ForeignKey(BlogPost, related_name='likes', on_delete=models.CASCADE)
@@ -182,3 +190,8 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.author.username} for {self.post.title}"
+
+    def save(self, *args, **kwargs):
+        if not moderate_content(self.content):
+            raise ValueError("Inappropriate content detected in review.")
+        super().save(*args, **kwargs)

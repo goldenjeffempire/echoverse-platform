@@ -255,7 +255,11 @@ def blog_post_detail(request, pk):
             comment = comment_form.save(commit=False)
             comment.blog_post = blog_post
             comment.author = request.user
-            comment.save()
+            try:
+                comment.save()
+            except ValueError as e:
+                messages.error(request, str(e))
+                return redirect("blog_post_detail", pk=pk)
         elif rating_form.is_valid():
             rating = rating_form.save(commit=False)
             rating.blog_post = blog_post
