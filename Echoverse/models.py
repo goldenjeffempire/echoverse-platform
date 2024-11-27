@@ -88,11 +88,13 @@ class BlogPost(models.Model):
     def get_ratings_vector(self):
         """Return a vector of ratings for similarity calculations."""
         ratings_vector = []
-        for user in User.objects.all():
+        all_users = User.objects.all()  # Get all users
+        for user in all_users:
             try:
+                # Ensure we correctly fetch the rating for each user
                 rating = self.ratings.get(author=user).rating
             except Rating.DoesNotExist:
-                rating = 0
+                rating = 0  # Default value when user has not rated the post
             ratings_vector.append(rating)
         return ratings_vector
 
@@ -109,7 +111,7 @@ class Rating(models.Model):
         blank=True
     )
     score = models.PositiveIntegerField(default=0)
-    review = models.TextField()
+    review = models.TextField(default="", blank=True)
     post = models.ForeignKey(
         BlogPost,
         related_name='ratings_for_post',
