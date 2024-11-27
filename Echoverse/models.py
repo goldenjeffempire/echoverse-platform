@@ -32,50 +32,6 @@ class Tag(models.Model):
         return self.name
 
 
-class BlogPost(models.Model):
-    title = models.CharField(max_length=255)
-    content = models.TextField()
-    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    image = models.ImageField(upload_to='post_images/', null=True, blank=True, validators=[validate_image])
-    views = models.PositiveIntegerField(default=0)
-    ratings = models.ManyToManyField(Rating, related_name='rated_posts', blank=True)
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        ordering = ['-created_at']
-
-    def get_similar_posts(self):
-        """
-        This method will calculate and return similar posts based on cosine similarity of ratings.
-        """
-        all_posts = BlogPost.objects.all()
-        ratings_matrix = np.array([post.get_ratings_vector() for post in all_posts])
-        similarity_matrix = cosine_similarity(ratings_matrix)
-        similar_posts = similarity_matrix[self.pk]
-
-        sorted_posts = sorted(enumerate(similar_posts), key=lambda x: x[1], reverse=True)[1:6]
-
-        return [all_posts[i[0]] for i in sorted_posts]
-
-    def get_ratings_vector(self):
-        """
-        Returns a vector of ratings for this post, used in similarity calculations.
-        """
-        ratings_vector = []
-        for user in User.objects.all():
-            try:
-                rating = self.ratings.get(author=user).rating
-            except Rating.DoesNotExist:
-                rating = 0
-            ratings_vector.append(rating)
-        return ratings_vector
-
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
@@ -94,6 +50,88 @@ def manage_user_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user=instance)
     else:
         instance.profile.save()
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True, validators=[validate_image])
+    views = models.PositiveIntegerField(default=0)
+    ratings = models.ManyToManyField(
+        'Rating',
+        related_name='rated_blog_posts',
+        blank=True
+    )
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def get_similar_posts(self):
+        """Calculate and return similar posts based on cosine similarity of ratings."""
+        all_posts = BlogPost.objects.all()
+        ratings_matrix = np.array([post.get_ratings_vector() for post in all_posts])
+        similarity_matrix = cosine_similarity(ratings_matrix)
+        similar_posts = similarity_matrix[self.pk]
+
+        sorted_posts = sorted(enumerate(similar_posts), key=lambda x: x[1], reverse=True)[1:6]
+
+        return [all_posts[i[0]] for i in sorted_posts]
+
+    def get_ratings_vector(self):
+        """Return a vector of ratings for similarity calculations."""
+        ratings_vector = []
+        for user in User.objects.all():
+            try:
+                rating = self.ratings.get(author=user).rating
+            except Rating.DoesNotExist:
+                rating = 0
+            ratings_vector.append(rating)
+        return ratings_vector
+
+
+class Rating(models.Model):
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='authored_ratings'
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='received_ratings',
+        null=True,
+        blank=True
+    )
+    score = models.PositiveIntegerField(default=0)
+    review = models.TextField()
+    post = models.ForeignKey(
+        BlogPost,
+        related_name='ratings_for_post',
+        on_delete=models.CASCADE
+    )
+    rating = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+        choices=[
+            (1, '1'),
+            (2, '2'),
+            (3, '3'),
+            (4, '4'),
+            (5, '5'),
+        ],
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Rating by {self.user.username} for {self.post.title}"
 
 
 class Comment(models.Model):
@@ -131,30 +169,6 @@ class UserInteraction(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.post.title}'
-
-
-class Rating(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    score = models.PositiveIntegerField(default=0)
-    post = models.ForeignKey(BlogPost, related_name='ratings', on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.IntegerField(
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
-        ],
-        choices=[
-            (1, '1'),
-            (2, '2'),
-            (3, '3'),
-            (4, '4'),
-            (5, '5'),
-        ],
-    )
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"Rating by {self.user} for {self.score}"
 
 
 class Review(models.Model):
