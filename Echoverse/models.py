@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 
 def validate_image(file):
@@ -40,6 +42,7 @@ class BlogPost(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.ImageField(upload_to='post_images/', null=True, blank=True, validators=[validate_image])
     views = models.PositiveIntegerField(default=0)
+    ratings = models.ManyToManyField(Rating, related_name='rated_posts', blank=True)
 
     def __str__(self):
         return self.title
@@ -47,6 +50,31 @@ class BlogPost(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def get_similar_posts(self):
+        """
+        This method will calculate and return similar posts based on cosine similarity of ratings.
+        """
+        all_posts = BlogPost.objects.all()
+        ratings_matrix = np.array([post.get_ratings_vector() for post in all_posts])
+        similarity_matrix = cosine_similarity(ratings_matrix)
+        similar_posts = similarity_matrix[self.pk]
+
+        sorted_posts = sorted(enumerate(similar_posts), key=lambda x: x[1], reverse=True)[1:6]
+
+        return [all_posts[i[0]] for i in sorted_posts]
+
+    def get_ratings_vector(self):
+        """
+        Returns a vector of ratings for this post, used in similarity calculations.
+        """
+        ratings_vector = []
+        for user in User.objects.all():
+            try:
+                rating = self.ratings.get(author=user).rating
+            except Rating.DoesNotExist:
+                rating = 0
+            ratings_vector.append(rating)
+        return ratings_vector
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -60,14 +88,12 @@ class Profile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def manage_user_profile(sender, instance, created, **kwargs):
+    """Signal to create or save user profile on user save."""
     if created:
         Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    else:
+        instance.profile.save()
 
 
 class Comment(models.Model):
@@ -108,6 +134,8 @@ class UserInteraction(models.Model):
 
 
 class Rating(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    score = models.PositiveIntegerField(default=0)
     post = models.ForeignKey(BlogPost, related_name='ratings', on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(
@@ -126,11 +154,12 @@ class Rating(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Rating by {self.author.username} for {self.post.title}"
+        return f"Rating by {self.user} for {self.score}"
 
 
 class Review(models.Model):
     post = models.ForeignKey(BlogPost, related_name='reviews', on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)

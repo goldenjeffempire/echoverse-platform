@@ -1,11 +1,11 @@
 import openai
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import BlogPost, Category, UserInteraction, Profile, Comment, Like
+from .models import BlogPost, Category, UserInteraction, Profile, Comment, Like, Rating, Review
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm, AIContentForm
+from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm, AIContentForm, RatingForm, ReviewForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
@@ -234,6 +234,48 @@ def post_detail(request, pk):
         'ai_recommendations': ai_recommendations,
         'personalized_recommendations': personalized_recommendations,
         'tags': post.tags.all()
+    })
+
+def blog_post_detail(request, pk):
+    blog_post = get_object_or_404(BlogPost, pk=pk)
+    blog_post.views += 1
+    blog_post.save()
+    comments = blog_post.comments.all()
+    ratings = blog_post.ratings.all()
+    reviews = blog_post.reviews.all()
+
+    similar_posts = blog_post.get_similar_posts()
+
+    comment_form = CommentForm(request.POST or None)
+    rating_form = RatingForm(request.POST or None)
+    review_form = ReviewForm(request.POST or None)
+
+    if request.method == 'POST':
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.blog_post = blog_post
+            comment.author = request.user
+            comment.save()
+        elif rating_form.is_valid():
+            rating = rating_form.save(commit=False)
+            rating.blog_post = blog_post
+            rating.author = request.user
+            rating.save()
+        elif review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.blog_post = blog_post
+            review.author = request.user
+            review.save()
+
+    return render(request, 'echoverse/blog_post_detail.html', {
+        'blog_post': blog_post,
+        'comments': comments,
+        'ratings': ratings,
+        'reviews': reviews,
+        'similar_posts': similar_posts,
+        'comment_form': comment_form,
+        'rating_form': rating_form,
+        'review_form': review_form
     })
 
 def post_interaction(request, post_id):

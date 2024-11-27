@@ -1,5 +1,5 @@
 from django import forms
-from .models import BlogPost, Comment, Profile, Tag
+from .models import BlogPost, Comment, Profile, Tag, Rating, Review
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -48,3 +48,13 @@ class SignupForm(UserCreationForm):
 
 class AIContentForm(forms.Form):
     prompt = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Enter your content idea or prompt here...'}))
+
+class RatingForm(forms.ModelForm):
+    class Meta:
+        model = Rating
+        fields = ['rating']
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['content', 'rating', 'post']
