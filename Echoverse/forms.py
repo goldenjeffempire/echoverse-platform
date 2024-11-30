@@ -53,6 +53,9 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ['rating']
+        widgets = {
+            'score': forms.RadioSelect(choices=[(i, i) for i in range(1, 6)]),
+        }
 
 class ReviewForm(forms.ModelForm):
     class Meta:

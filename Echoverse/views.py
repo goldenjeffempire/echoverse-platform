@@ -252,7 +252,8 @@ def blog_post_detail(request, pk):
     rating_form = RatingForm(request.POST or None)
     review_form = ReviewForm(request.POST or None)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'comment_submit' in request.POST:
+        comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.blog_post = blog_post
@@ -272,10 +273,13 @@ def blog_post_detail(request, pk):
             review.blog_post = blog_post
             review.author = request.user
             review.save()
+        return redirect('blog_post_detail', pk=pk)
+
+    average_rating = blog_post.ratings.aggregate(models.Avg('score'))['score__avg'] or 0
 
     return render(request, 'echoverse/blog_post_detail.html', {
         'blog_post': blog_post,
-        'comments': comments,
+        'comments': blog_post.comments.all(),
         'ratings': ratings,
         'reviews': reviews,
         'similar_posts': similar_posts,

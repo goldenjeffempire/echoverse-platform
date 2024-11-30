@@ -19,7 +19,7 @@
             {% if comments %}
                 {% for comment in comments %}
                     <div class="comment">
-                        <p><strong>{{ comment.author.username }}</strong>: {{ comment.content }}</p>
+                        <p><strong>{{ comment.author.username }}</strong> says:{{ comment.content }}</p>
                         <small class="comment-date">{{ comment.created_at|date:"F d, Y" }}</small>
                     </div>
                 {% endfor %}
@@ -39,23 +39,23 @@
     </section>
 
     <!-- Ratings Section -->
-    <section class="ratings-section">
-        <h3>Ratings</h3>
-        <p>Average Rating: 
-            {% if ratings %}
-                {% with total_ratings=ratings|length %}
-                    {% with sum_ratings=ratings|dictsort:"rating"|sum:"rating" %}
-                        {{ sum_ratings / total_ratings }}
-                    {% endwith %}
+    <section aria-labelledby="ratings-section-heading" class="ratings-section">
+    <h3 id="ratings-section-heading">Ratings</h3>
+    <p>Average Rating: 
+        {% if ratings %}
+            {% with total_ratings=ratings|length %}
+                {% with sum_ratings=ratings|dictsort:"rating"|sum:"rating" %}
+                    {{ sum_ratings / total_ratings }}
                 {% endwith %}
-            {% else %}
-                No ratings yet.
-            {% endif %}
-        </p>
+            {% endwith %}
+        {% else %}
+            No ratings yet.
+        {% endif %}
+    </p>
 
-        <h4>Rate this Post</h4>
-        <form method="post" class="rating-form">
-            {% csrf_token %}
+    <h4>Leave a Rating</h4>
+    <form method="post" class="rating-form">
+        {% csrf_token %}
             <div class="form-group">
                 {{ rating_form.as_p }}
             </div>
