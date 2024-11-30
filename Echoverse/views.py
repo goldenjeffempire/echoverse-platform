@@ -18,6 +18,7 @@ from django.core.mail import send_mail
 from .moderation import moderate_content
 from .recommendation import recommend_posts_for_user
 from .ai_content import generate_blog_post
+from .utils import get_similar_posts
 
 openai.api_key = settings.OPENAI_API_KEY
 
@@ -245,6 +246,7 @@ def blog_post_detail(request, pk):
     reviews = blog_post.reviews.all()
 
     similar_posts = blog_post.get_similar_posts()
+    recommended_posts = get_similar_posts(pk)
 
     comment_form = CommentForm(request.POST or None)
     rating_form = RatingForm(request.POST or None)
@@ -277,6 +279,7 @@ def blog_post_detail(request, pk):
         'ratings': ratings,
         'reviews': reviews,
         'similar_posts': similar_posts,
+        "recommended_posts": recommended_posts,
         'comment_form': comment_form,
         'rating_form': rating_form,
         'review_form': review_form
