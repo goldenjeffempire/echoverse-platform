@@ -20,7 +20,7 @@ class ProfileForm(forms.ModelForm):
         fields = ['bio', 'profile_picture', 'location', 'birth_date']
 
 class SearchForm(forms.Form):
-    query = forms.CharField(label='Search', max_length=100)
+    query = forms.CharField(label='Search', max_length=100, required=False)
 
 class SignupForm(UserCreationForm):
     password = forms.CharField(widget=forms.PasswordInput)

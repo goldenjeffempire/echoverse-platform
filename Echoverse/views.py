@@ -5,7 +5,7 @@ from .models import BlogPost, Category, UserInteraction, Profile, Comment, Like,
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm, AIContentForm, RatingForm, ReviewForm
+from .forms import BlogPostForm, CommentForm, ProfileForm, SignupForm, SearchForm, AIContentForm, RatingForm, ReviewForm
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.decorators import login_required
@@ -287,6 +287,19 @@ def blog_post_detail(request, pk):
         'comment_form': comment_form,
         'rating_form': rating_form,
         'review_form': review_form
+    })
+
+def blog_post_list(request):
+    form = SearchForm(request.GET)
+    posts = BlogPost.objects.all()
+
+    if form.is_valid() and form.cleaned_data['query']:
+        query = form.cleaned_data['query']
+        posts = posts.filter(title__icontains=query) | posts.filter(content__icontains=query)
+
+    return render(request, "blog_post_list.html", {
+        "form": form,
+        "posts": posts,
     })
 
 def post_interaction(request, post_id):

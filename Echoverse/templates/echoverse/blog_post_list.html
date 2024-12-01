@@ -1,0 +1,45 @@
+<h1>Blog Posts</h1>
+
+<!-- Search Form -->
+<form method="get" action="" class="mb-4">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="search-query">Search Posts:</label>
+        {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<h2>
+    Results{% if request.GET.search %}: "{{ request.GET.search }}"{% endif %}
+</h2>
+
+{% if posts %}
+    <div class="list-group">
+        {% for post in posts %}
+            <div class="list-group-item">
+                <h3><a href="{% url 'blog_post_detail' pk=post.pk %}">{{ post.title }}</a></h3>
+                <p><small>Posted on {{ post.created_at|date:"F j, Y" }}{% if post.author %} by {{ post.author }}{% endif %}</small></p>
+                <p>{{ post.content|truncatewords:30 }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination mt-4">
+        {% if posts.has_previous %}
+            <a href="?page=1" class="btn btn-secondary">&laquo; First</a>
+            <a href="?page={{ posts.previous_page_number }}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+        
+        <span>Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+        
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}" class="btn btn-secondary">Next</a>
+            <a href="?page={{ posts.paginator.num_pages }}" class="btn btn-secondary">Last &raquo;</a>
+        {% endif %}
+    </div>
+
+{% else %}
+    <p>No posts found matching your query.</p>
+{% endif %}
