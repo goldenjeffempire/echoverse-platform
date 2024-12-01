@@ -297,9 +297,14 @@ def blog_post_list(request):
         query = form.cleaned_data['query']
         posts = posts.filter(title__icontains=query) | posts.filter(content__icontains=query)
 
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "blog_post_list.html", {
         "form": form,
         "posts": posts,
+        "page_obj": page_obj,
     })
 
 def post_interaction(request, post_id):
