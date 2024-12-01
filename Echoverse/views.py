@@ -297,7 +297,7 @@ def blog_post_list(request):
         query = form.cleaned_data['query']
         posts = posts.filter(title__icontains=query) | posts.filter(content__icontains=query)
 
-    paginator = Paginator(posts, 5)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
